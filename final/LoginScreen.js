@@ -175,8 +175,8 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     marginTop: 20,
     overflow: 'hidden', 
-    width: '60%',
-    height: 90,
+    width:  70,
+    height: 200,
   },
   loginButtonText: {
 
