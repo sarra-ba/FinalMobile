@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ImageBackground,  TouchableOpacity,} from 'react-native';
 
-const DashboardScreen = () => {
+const notifications = () => {
   return (
     <View style={styles.container}>
       <ImageBackground
@@ -9,15 +9,13 @@ const DashboardScreen = () => {
         style={styles.image}
         imageStyle={styles.roundedBorder}>
         <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Profile</Text>
+          <Text style={styles.headerText}>Notifications</Text>
         </View>
-        {/* The leaf icon should be placed within the ImageBackground */}
         <Image
           source={require('./assets/leaf-removebg-preview1.png')}
           style={styles.leaf}
         />
       </ImageBackground>
-  {/* Bottom navigation bar */}
       <View style={styles.navBar}>
         <TouchableOpacity style={styles.navItem}>
           <Image
@@ -77,7 +75,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',
-    top: 130,
+    top: 20,
     fontFamily: 'notoserif', // Ensure the font is installed and linked correctly
   },
   leaf: {
@@ -107,4 +105,4 @@ const styles = StyleSheet.create({
 
 });
 
-export default DashboardScreen;
+export default notifications;

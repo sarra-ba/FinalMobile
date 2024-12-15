@@ -8,8 +8,10 @@ import {
   TouchableOpacity,
   Animated,
   ImageBackground,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'; 
+import LinearGradient from 'react-native-linear-gradient';
 
 const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -71,7 +73,7 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
       />
       {isFocused && (
         <LinearGradient
-          colors={['#83CE2C', '#426816']} 
+          colors={['#83CE2C', '#426816']}
           style={styles.gradientBar}
         />
       )}
@@ -80,54 +82,60 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
 };
 
 const SignupScreen = () => {
-  const [username, setUsername]= useState('');
+  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  return (
-    
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('./assets/image_2024-12-03_151959045.svg')}
-        resizeMode="cover" style={styles.image}>
-      </ImageBackground>
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
 
-      <View style={styles.topImage}>
-        <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
-        <View style={styles.container} edges={['left', 'right']}>
+  return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require('./assets/image_2024-12-03_151959045.svg')}
+          resizeMode="cover"
+          style={styles.image}
+        ></ImageBackground>
+
+        <View style={styles.topImage}>
+          <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
+          <View style={styles.container} edges={['left', 'right']}></View>
+        </View>
+
+        <View style={styles.formContainer}>
+          <FloatingLabelInput
+            label="Username"
+            value={username}
+            onChangeText={setUsername}
+          />
+
+          <FloatingLabelInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <FloatingLabelInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
+          <TouchableOpacity style={styles.signupButton}>
+            <LinearGradient
+              colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
+              style={styles.gradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Text style={styles.SignupButtonText}>Sign Up</Text>
+            </LinearGradient>
+          </TouchableOpacity>
         </View>
       </View>
-
-      <View style={styles.formContainer}>
-        <FloatingLabelInput
-          label="Username"
-          value={username}
-          onChangeText={setUsername}
-        />
-
-        <FloatingLabelInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <FloatingLabelInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.signupButton}>
-          <LinearGradient
-            colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
-            style={styles.gradient} start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }} >
-            <Text style={styles.SignupButtonText}>Sign Up</Text>
-          </LinearGradient>
-        </TouchableOpacity>
-      </View>
-
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -166,11 +174,10 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderBottomWidth: 4,
-    borderColor: 'transparent', 
+    borderColor: 'transparent',
     paddingBottom: 10,
     fontSize: 16,
   },
- 
   gradientBar: {
     height: 2,
     width: '100%',
@@ -182,7 +189,7 @@ const styles = StyleSheet.create({
     marginLeft: 70,
     borderRadius: 0,
     marginTop: 20,
-    overflow: 'hidden', 
+    overflow: 'hidden',
     width: '60%',
     height: 90,
   },
@@ -190,15 +197,14 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 20,
-    marginBottom : 25,
+    marginBottom: 25,
   },
   SignupButtonText: {
-
     color: 'white',
     fontSize: 20,
     alignItems: 'center',
-    fontWeight: 10,
+    fontWeight: 'bold',
   },
 });
 
-export default SignupScreen; 
+export default SignupScreen;

@@ -8,6 +8,9 @@ import {
   TouchableOpacity,
   Animated,
   ImageBackground,
+  Keyboard,
+  TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient'; 
 
@@ -79,55 +82,59 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
   );
 };
 
-
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   return (
-    
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('./assets/image_2024-12-03_151959045.svg')}
-        resizeMode="cover" style={styles.image}>
-      </ImageBackground>
-
-      <View style={styles.topImage}>
-        <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
-        <View style={styles.container} edges={['left', 'right']}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+      <View style={styles.container}>
+        <ImageBackground
+          source={require('./assets/image_2024-12-03_151959045.svg')}
+          resizeMode="cover" 
+          style={styles.image}
+        />
+        <View style={styles.topImage}>
+          <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
         </View>
-      </View>
 
-      <View style={styles.formContainer}>
-        <FloatingLabelInput
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-        />
-        <FloatingLabelInput
-          label="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
+        <View style={styles.formContainer}>
+          <FloatingLabelInput
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
+            keyboardType="email-address"
+          />
+          <FloatingLabelInput
+            label="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry
+          />
 
-        <TouchableOpacity style={styles.loginButton}>
-          <LinearGradient
-            colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
-            style={styles.gradient} start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 0 }} >
-            <Text style={styles.loginButtonText}>Log In</Text>
-          </LinearGradient>
+          <TouchableOpacity style={styles.loginButton}>
+            <LinearGradient
+              colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
+              style={styles.gradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 0 }}
+            >
+              <Text style={styles.loginButtonText}>Log In</Text>
+            </LinearGradient>
+          </TouchableOpacity>
+        </View>
+        <TouchableOpacity onPress={() => Alert.alert("Forgot Password Pressed")}>
+          <Text style={styles.link}>Forgot password?</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Alert.alert("Signup Pressed")}>
+          <Text style={styles.link}>Don't have an account yet?</Text>
         </TouchableOpacity>
       </View>
-      <TouchableOpacity onPress={() => Alert.alert("Forgot Password Pressed")}>
-        <Text style={styles.link}>Forgot password?</Text>
-      </TouchableOpacity>
-      <TouchableOpacity onPress={() => Alert.alert("Signup Pressed")}>
-        <Text style={styles.link}>Don't have an account yet?</Text>
-      </TouchableOpacity>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 
@@ -166,7 +173,7 @@ const styles = StyleSheet.create({
   },
   textInput: {
     borderBottomWidth: 4,
-    borderColor: 'transparent', // Removes the visible box
+    borderColor: 'transparent',
     paddingBottom: 10,
     fontSize: 16,
   },
@@ -175,39 +182,34 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     marginTop: 20,
     overflow: 'hidden', 
-    width:  70,
-    height: 200,
+    width: '60%',
+    height: 90,
   },
   loginButtonText: {
-
     color: 'white',
     fontSize: 20,
-    fontWeight: 10,
   },
   gradient: {
     paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 20,
-    marginBottom : 25,
+    marginBottom: 25,
   },
-  
   gradientBar: {
-    height: 3, // Adjust thickness
+    height: 3,
     width: '100%',
     marginTop: 2,
   },
-
   link: {
     color: '#4caf50',
     marginTop: 10,
-    left : 50,
+    left: 50,
     textDecorationLine: 'underline',
-    },
-    image: {
-      justifyContent: 'center',
-      color:'green'
-    },
-
+  },
+  image: {
+    justifyContent: 'center',
+    color: 'green',
+  },
 });
 
 export default LoginScreen;
