@@ -12,6 +12,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback
 } from 'react-native';
+import NavBar from './NavBar';  // Import the NavBar component
 
 const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -51,15 +52,11 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
   return (
     <View style={styles.inputContainer}>
       <Animated.Text
-        style={[
-          styles.label,
-          {
-            top: animatedLabelPosition,
-            fontSize: animatedLabelFontSize,
-            color: isFocused || value ? 'white' : 'white',
-          },
-        ]}
-      >
+        style={[styles.label, {
+          top: animatedLabelPosition,
+          fontSize: animatedLabelFontSize,
+          color: isFocused || value ? 'white' : 'white',
+        }]}>
         {label}
       </Animated.Text>
       <TextInput
@@ -92,20 +89,23 @@ const ProfileScreen = () => {
           source={require('./assets/background1.png')}
           style={styles.image}
           imageStyle={styles.roundedBorder}>
-          <View style={styles.headerContainer}>
-            <Text style={styles.headerText}>My Profile</Text>
+          
+          {/* Profile Image and Name */}
+          <View style={styles.profileContainer}>
+            <Image
+              source={require('./assets/user1.png')} // Add user's profile picture
+              style={styles.profileImage}
+            />
+            <Text style={styles.profileName}>John Doe</Text>  {/* Replace with actual username */}
+            <Text style={styles.profileAddress}>1234 Street Name, City, Country</Text>  {/* Replace with actual address */}
           </View>
-          <Image
-            source={require('./assets/leaf-removebg-preview1.png')}
-            style={styles.leaf}
-          />
+          
           <View style={styles.formContainer}>
             <FloatingLabelInput
               label="Username"
               value={username}
               onChangeText={changeUsername}
             />
-
             <FloatingLabelInput
               label="Email"
               value={email}
@@ -118,51 +118,19 @@ const ProfileScreen = () => {
               onChangeText={changePassword}
               secureTextEntry
             />
-
             <FloatingLabelInput
               label="Location"
               value={location}
               onChangeText={changeLocation}
-              secureTextEntry
             />
-
             <TouchableOpacity style={styles.confirmButton}>
               <Text style={styles.confirmButtonText}>Confirm</Text>
             </TouchableOpacity>
           </View>
         </ImageBackground>
-        <View style={styles.navBar}>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/fertilizer.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/bell.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/recycle-sign1.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/user1.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/menu.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
+
+        {/* Use NavBar Component */}
+        <NavBar /> {/* This replaces the navbar code */}
       </View>
     </TouchableWithoutFeedback>
   );
@@ -182,6 +150,28 @@ const styles = StyleSheet.create({
   roundedBorder: {
     borderRadius: 50,
   },
+  profileContainer: {
+    alignItems: 'center',
+    marginTop: 30,
+  },
+  profileImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 60, // Circular image
+    borderWidth: 4,
+    borderColor: '#fff',
+  },
+  profileName: {
+    fontSize: 24,
+    color: '#fff',
+    fontWeight: 'bold',
+    marginTop: 10,
+  },
+  profileAddress: {
+    fontSize: 16,
+    color: '#fff',
+    marginTop: 5,
+  },
   headerContainer: {
     alignItems: 'center',
   },
@@ -199,22 +189,6 @@ const styles = StyleSheet.create({
     right: -8,
     width: 120,
     height: 120,
-    resizeMode: 'contain',
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingVertical: 5,
-    top: 45,
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30,
-    height: 30,
     resizeMode: 'contain',
   },
   formContainer: {

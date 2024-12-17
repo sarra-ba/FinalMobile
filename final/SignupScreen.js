@@ -81,7 +81,7 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
   );
 };
 
-const SignupScreen = () => {
+const SignupScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -123,7 +123,10 @@ const SignupScreen = () => {
             onChangeText={setPassword}
             secureTextEntry
           />
-          <TouchableOpacity style={styles.signupButton}>
+          <TouchableOpacity
+            style={styles.signupButton}
+            onPress={() => navigation.navigate('Login')} // Navigate to Login screen
+          >
             <LinearGradient
               colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
               style={styles.gradient}

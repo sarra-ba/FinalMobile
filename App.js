@@ -1,108 +1,60 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground,  TouchableOpacity,} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import Dashboard from './final/dashboard';
+import LoginScreen from './final/LoginScreen';
+import NotificationScreen from './final/NotificationScreen';
+import Profile from './final/Profile';
+import SignupScreen from './final/SignupScreen';
+import Welcome from './final/welcom';
+import Menu from './final/Menu';
+import Marketplace from './final/MarketPlace';
+import Filter from './final/Filter';
 
-const notifications = () => {
+import OrderDetail from './final/OrderDetail';
+import ConfirmOrder from './final/ConfirmOrder';
+import Payment from './final/Payment';
+import Shipping from './final/Shipping';
+import SetLocation from './final/SetLocation';
+import TrackOrder from './final/TrackOrder';
+
+// Importing the new screens for password recovery flow
+import ForgotPassword from './screens/ForgotPassword';
+import VerifyCode from './screens/VerifyCode';
+import PasswordReset from './screens/PasswordReset';
+import SetNewPassword from './screens/SetNewPassword';
+import Success from './screens/Success';
+
+const Stack = createStackNavigator();
+
+export default function App() {
   return (
-    <View style={styles.container}>
-      <ImageBackground
-        source={require('./assets/background1.png')}
-        style={styles.image}
-        imageStyle={styles.roundedBorder}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerText}>Notifications</Text>
-        </View>
-        <Image
-          source={require('./assets/leaf-removebg-preview1.png')}
-          style={styles.leaf}
-        />
-      </ImageBackground>
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/fertilizer.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/bell.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/recycle-sign1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/user1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/menu.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="Signup" component={SignupScreen} />
+        <Stack.Screen name="Dashboard" component={Dashboard} />
+        <Stack.Screen name="Menu" component={Menu} />
+        <Stack.Screen name="Marketplace" component={Marketplace} />
+        <Stack.Screen name="Filter" component={Filter} />
+        <Stack.Screen name="Profile" component={Profile} />
+        <Stack.Screen name="Notifications" component={NotificationScreen} />
+        
+        {/* Password Recovery Flow Screens */}
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
+        <Stack.Screen name="VerifyCode" component={VerifyCode} />
+        <Stack.Screen name="PasswordReset" component={PasswordReset} />
+        <Stack.Screen name="SetNewPassword" component={SetNewPassword} />
+        <Stack.Screen name="Success" component={Success} />
 
-    </View>
+        <Stack.Screen name="OrderDetail" component={OrderDetail} />
+        <Stack.Screen name="ConfirmOrder" component={ConfirmOrder} />
+        <Stack.Screen name="Payment" component={Payment} />
+        <Stack.Screen name="Shipping" component={Shipping} />
+        <Stack.Screen name="SetLocation" component={SetLocation} />
+        <Stack.Screen name="TrackOrder" component={TrackOrder} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  image: {
-    width: 411,
-    height: 720,
-    top:130,
-    borderRadius: 30,
-  },
-  roundedBorder: {
-    borderRadius: 50,
-  },
-  headerContainer: {
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 40,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    top: 20,
-    fontFamily: 'notoserif', // Ensure the font is installed and linked correctly
-  },
-  leaf: {
-    position: 'absolute', 
-    top: -90, 
-    right: -8, 
-    width: 120, 
-    height: 120, 
-    resizeMode: 'contain', 
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingVertical: 5,
-    top : 45,
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30, 
-    height: 30, 
-    resizeMode: 'contain',
-  },
-
-});
-
-export default notifications;
+}

@@ -1,21 +1,30 @@
-import React, { useState, useEffect } from 'react';
-import {
-StyleSheet,
-ImageBackground,
-SafeAreaView} from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, ImageBackground, SafeAreaView } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const WelcomeScreen = () => {
-    return(
+  const navigation = useNavigation(); // Initialize navigation
 
-            <SafeAreaView style={styles.container} edges={['left', 'right']}>
-              <ImageBackground
-              source={require('./assets/welcome1.png')}
-              resizeMode="cover" style={styles.image}>
-              </ImageBackground>
-            </SafeAreaView>
+  useEffect(() => {
+    // Set a timer to navigate to Login screen after 2500ms
+    const timer = setTimeout(() => {
+      navigation.navigate('Login'); // Navigate to Login
+    }, 2500);
 
-    );
- };
+    // Cleanup the timer if the component unmounts before the timeout
+    return () => clearTimeout(timer);
+  }, [navigation]);
+
+  return (
+    <SafeAreaView style={styles.container} edges={['left', 'right']}>
+      <ImageBackground
+        source={require('./assets/welcome1.png')}
+        resizeMode="cover"
+        style={styles.image}
+      />
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -28,6 +37,3 @@ const styles = StyleSheet.create({
 });
 
 export default WelcomeScreen;
-
-
-

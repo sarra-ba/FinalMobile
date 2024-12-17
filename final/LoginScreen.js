@@ -12,7 +12,8 @@ import {
   TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient'; 
+import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native'; // Import navigation hook
 
 const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
   const [isFocused, setIsFocused] = useState(false);
@@ -74,7 +75,7 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
       />
       {isFocused && (
         <LinearGradient
-          colors={['#83CE2C', '#426816']} 
+          colors={['#83CE2C', '#426816']}
           style={styles.gradientBar}
         />
       )}
@@ -85,9 +86,15 @@ const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keybo
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigation = useNavigation(); // Initialize navigation hook
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
+  };
+
+  const handleLogin = () => {
+    // Add login logic here, then navigate to Dashboard
+    navigation.navigate('Dashboard');
   };
 
   return (
@@ -95,7 +102,7 @@ const LoginScreen = () => {
       <View style={styles.container}>
         <ImageBackground
           source={require('./assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover" 
+          resizeMode="cover"
           style={styles.image}
         />
         <View style={styles.topImage}>
@@ -116,7 +123,7 @@ const LoginScreen = () => {
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.loginButton}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <LinearGradient
               colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
               style={styles.gradient}
@@ -127,10 +134,11 @@ const LoginScreen = () => {
             </LinearGradient>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity onPress={() => Alert.alert("Forgot Password Pressed")}>
+
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <Text style={styles.link}>Forgot password?</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Alert.alert("Signup Pressed")}>
+        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
           <Text style={styles.link}>Don't have an account yet?</Text>
         </TouchableOpacity>
       </View>
@@ -181,7 +189,7 @@ const styles = StyleSheet.create({
     marginLeft: 70,
     borderRadius: 0,
     marginTop: 20,
-    overflow: 'hidden', 
+    overflow: 'hidden',
     width: '60%',
     height: 90,
   },

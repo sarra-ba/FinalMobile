@@ -1,9 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground,  TouchableOpacity,} from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import NavBar from './NavBar'; // Import the NavBar component
 
 const DashboardScreen = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
+      {/* Ensure ImageBackground is not overlapping too much with other content */}
       <ImageBackground
         source={require('./assets/background1.png')}
         style={styles.image}
@@ -11,46 +16,14 @@ const DashboardScreen = () => {
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Dashboard</Text>
         </View>
-        {/* The leaf icon should be placed within the ImageBackground */}
         <Image
           source={require('./assets/leaf-removebg-preview1.png')}
           style={styles.leaf}
         />
       </ImageBackground>
-  {/* Bottom navigation bar */}
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/fertilizer.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/bell.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/recycle-sign1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/user1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/menu.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
 
+      {/* Use the NavBar component here */}
+      <NavBar />
     </View>
   );
 };
@@ -58,12 +31,11 @@ const DashboardScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between', // Ensure space for the bottom bar
   },
   image: {
-    width: 411,
+    width: '100%',
     height: 720,
-    top:130,
     borderRadius: 30,
   },
   roundedBorder: {
@@ -78,33 +50,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     top: 130,
-    fontFamily: 'notoserif', // Ensure the font is installed and linked correctly
+    fontFamily: 'notoserif',
   },
   leaf: {
-    position: 'absolute', 
-    top: -90, 
-    right: -8, 
-    width: 120, 
-    height: 120, 
-    resizeMode: 'contain', 
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingVertical: 5,
-    top : 45,
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30, 
-    height: 30, 
+    position: 'absolute',
+    top: -90,
+    right: -8,
+    width: 120,
+    height: 120,
     resizeMode: 'contain',
   },
-
 });
 
 export default DashboardScreen;

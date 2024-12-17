@@ -1,9 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, ImageBackground,  TouchableOpacity,} from 'react-native';
+import { View, Text, StyleSheet, Image, ImageBackground, TouchableOpacity } from 'react-native';
+import NavBar from './NavBar';  // Import the NavBar component
 
-const notifications = () => {
+const Notifications = () => {
   return (
     <View style={styles.container}>
+      
       <ImageBackground
         source={require('./assets/background1.png')}
         style={styles.image}
@@ -16,39 +18,8 @@ const notifications = () => {
           style={styles.leaf}
         />
       </ImageBackground>
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/fertilizer.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/bell.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/recycle-sign1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/user1.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/menu.png')} // Replace with your icon path
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
-
+      {/* Use NavBar Component */}
+      <NavBar /> {/* This replaces the navbar code */}
     </View>
   );
 };
@@ -61,7 +32,7 @@ const styles = StyleSheet.create({
   image: {
     width: 411,
     height: 720,
-    top:130,
+    top: 130,
     borderRadius: 30,
   },
   roundedBorder: {
@@ -79,30 +50,13 @@ const styles = StyleSheet.create({
     fontFamily: 'notoserif', // Ensure the font is installed and linked correctly
   },
   leaf: {
-    position: 'absolute', 
-    top: -90, 
-    right: -8, 
-    width: 120, 
-    height: 120, 
-    resizeMode: 'contain', 
-  },
-  navBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'white',
-    paddingVertical: 5,
-    top : 45,
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30, 
-    height: 30, 
+    position: 'absolute',
+    top: -90,
+    right: -8,
+    width: 120,
+    height: 120,
     resizeMode: 'contain',
   },
-
 });
 
-export default notifications;
+export default Notifications;
