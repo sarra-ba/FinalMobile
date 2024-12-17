@@ -1,142 +1,158 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   TextInput,
   TouchableOpacity,
-  Animated,
-  ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 
-const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const animatedLabelPosition = useRef(new Animated.Value(value ? -10 : 15)).current;
-  const animatedLabelFontSize = useRef(new Animated.Value(value ? 15 : 15)).current;
+import CheckBox from 'react-native-checkbox';
 
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.timing(animatedLabelPosition, {
-      toValue: -20,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(animatedLabelFontSize, {
-      toValue: 16,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
+const SignupScreen = () => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [isFarmer, setIsFarmer] = useState(false); // State for 'Farmer' checkbox
+  const [isRestaurant, setIsRestaurant] = useState(false); // State for 'Restaurant/Hotel' checkbox
+  const navigation = useNavigation();
+
+  // Function to dismiss the keyboard when tapping outside input fields
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
   };
 
-  const handleBlur = () => {
-    if (!value) {
-      setIsFocused(false);
-      Animated.timing(animatedLabelPosition, {
-        toValue: 15,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedLabelFontSize, {
-        toValue: 16,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
+  // Function to validate inputs and proceed with signup
+  const validateAndSignup = () => {
+    if (!name) {
+      Alert.alert('Validation Error', 'Name is required.');
+      return;
+    }
+    if (!email) {
+      Alert.alert('Validation Error', 'Email is required.');
+      return;
+    }
+    if (!password) {
+      Alert.alert('Validation Error', 'Password is required.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Alert.alert('Validation Error', 'Invalid email format.');
+      return;
+    }
+    if (!isFarmer && !isRestaurant) {
+      Alert.alert('Validation Error', 'Please select your type (Farmer or Restaurant/Hotel).');
+      return;
+    }
+    // Navigate to Dashboard after successful validation
+    navigation.navigate('Dashboard');
+  };
+
+  // Function to handle checkbox selection to ensure only one is selected at a time
+  const handleFarmerChange = (value) => {
+    setIsFarmer(value);
+    if (value) {
+      setIsRestaurant(false); // Deselect Restaurant/Hotel if Farmer is selected
     }
   };
 
-  return (
-    <View style={styles.inputContainer}>
-      <Animated.Text
-        style={[
-          styles.label,
-          {
-            top: animatedLabelPosition,
-            fontSize: animatedLabelFontSize,
-            color: isFocused || value ? 'black' : 'grey',
-          },
-        ]}
-      >
-        {label}
-      </Animated.Text>
-      <TextInput
-        style={styles.textInput}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-      {isFocused && (
-        <LinearGradient
-          colors={['#83CE2C', '#426816']}
-          style={styles.gradientBar}
-        />
-      )}
-    </View>
-  );
-};
-
-const SignupScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
+  const handleRestaurantChange = (value) => {
+    setIsRestaurant(value);
+    if (value) {
+      setIsFarmer(false); // Deselect Farmer if Restaurant/Hotel is selected
+    }
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <ImageBackground
-          source={require('./assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover"
-          style={styles.image}
-        ></ImageBackground>
-
-        <View style={styles.topImage}>
-          <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
-          <View style={styles.container} edges={['left', 'right']}></View>
+        {/* Animated Icon */}
+        <View style={styles.animationContainer}>
+          <LottieView
+            source={require('./assets/wel.json')} // Animated asset for visual appeal
+            autoPlay
+            loop
+            style={styles.animatedIcon}
+          />
         </View>
 
+        {/* Page Title */}
+        <Text style={styles.title}>Create an Account</Text>
+
+        {/* Form Inputs */}
         <View style={styles.formContainer}>
-          <FloatingLabelInput
-            label="Username"
-            value={username}
-            onChangeText={setUsername}
+          <Text style={styles.label}>Name</Text>
+          <TextInput
+            style={styles.textInput}
+            value={name}
+            onChangeText={setName}
+            placeholder="Enter your Name"
+            placeholderTextColor="#aaa"
           />
 
-          <FloatingLabelInput
-            label="Email"
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.textInput}
             value={email}
             onChangeText={setEmail}
+            placeholder="Enter your email"
+            placeholderTextColor="#aaa"
             keyboardType="email-address"
+            autoCapitalize="none"
           />
-          <FloatingLabelInput
-            label="Password"
+
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.textInput}
             value={password}
             onChangeText={setPassword}
+            placeholder="Enter your password"
+            placeholderTextColor="#aaa"
             secureTextEntry
           />
-          <TouchableOpacity
-            style={styles.signupButton}
-            onPress={() => navigation.navigate('Login')} // Navigate to Login screen
-          >
+
+          {/* Farmer / Restaurant / Hotel Selection */}
+          <View style={styles.checkboxContainer}>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                value={isFarmer}
+                onValueChange={handleFarmerChange}
+                style={styles.checkbox}
+              />
+              <Text style={styles.checkboxLabel}>Farmer</Text>
+            </View>
+            <View style={styles.checkboxRow}>
+              <CheckBox
+                value={isRestaurant}
+                onValueChange={handleRestaurantChange}
+                style={styles.checkbox}
+              />
+              <Text style={styles.checkboxLabel}>Restaurant/Hotel</Text>
+            </View>
+          </View>
+
+          {/* Sign Up Button */}
+          <TouchableOpacity style={styles.signupButton} onPress={validateAndSignup}>
             <LinearGradient
-              colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
-              style={styles.gradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              colors={['#72C21B', '#81CE2C', '#426816']} // Gradient for button
+              style={styles.signupButtonGradient}
             >
-              <Text style={styles.SignupButtonText}>Sign Up</Text>
+              <Text style={styles.signupButtonText}>Sign Up</Text>
             </LinearGradient>
           </TouchableOpacity>
+
+          {/* Already have an account link */}
+          <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+            <Text style={styles.link}>Already have an account? Log In</Text>
+          </TouchableOpacity>
         </View>
+
       </View>
     </TouchableWithoutFeedback>
   );
@@ -145,68 +161,81 @@ const SignupScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f8f8f8',
-  },
-  topImage: {
+    backgroundColor: 'white',
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  imageStyle: {
-    width: 450,
-    top: -10,
-    resizeMode: 'contain',
+  animationContainer: {
+    height: 150,
+    width: 150,
+    marginBottom: 20,
+  },
+  animatedIcon: {
+    width: 150,
+    height: 150,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#426816',
+    marginBottom: 30,
   },
   formContainer: {
-    marginTop: 120,
-    paddingHorizontal: 40,
-  },
-  inputContainer: {
-    marginBottom: 50,
-    position: 'relative',
-    borderColor: 'white',
-    borderRadius: 10,
-    backgroundColor: 'white',
-    height: 50,
-    justifyContent: 'center',
+    width: '85%',
   },
   label: {
-    position: 'absolute',
-    left: 15,
     fontSize: 16,
-    color: 'grey',
-    zIndex: 1,
+    color: '#426816',
+    marginBottom: 5,
   },
   textInput: {
-    borderBottomWidth: 4,
-    borderColor: 'transparent',
-    paddingBottom: 10,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#81CE2C',
+    borderRadius: 8,
+    paddingHorizontal: 10,
     fontSize: 16,
-  },
-  gradientBar: {
-    height: 2,
-    width: '100%',
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
+    color: '#426816',
+    backgroundColor: '#F5F5F5',
+    marginBottom: 20,
   },
   signupButton: {
-    marginLeft: 70,
-    borderRadius: 0,
     marginTop: 20,
+    borderRadius: 10,
     overflow: 'hidden',
-    width: '60%',
-    height: 90,
   },
-  gradient: {
+  signupButtonGradient: {
     paddingVertical: 15,
     alignItems: 'center',
-    borderRadius: 20,
-    marginBottom: 25,
+    borderRadius: 10,
   },
-  SignupButtonText: {
+  signupButtonText: {
     color: 'white',
-    fontSize: 20,
-    alignItems: 'center',
+    fontSize: 16,
     fontWeight: 'bold',
+  },
+  link: {
+    marginTop: 15,
+    fontSize: 14,
+    color: '#426816',
+    textDecorationLine: 'underline',
+    textAlign: 'center',
+  },
+  checkboxContainer: {
+    marginTop: 20,
+    marginBottom: 30,
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  checkbox: {
+    marginRight: 10,
+  },
+  checkboxLabel: {
+    fontSize: 16,
+    color: '#426816',
   },
 });
 

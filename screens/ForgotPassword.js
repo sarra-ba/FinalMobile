@@ -3,70 +3,82 @@ import {
   View,
   Text,
   StyleSheet,
-  Image,
   TextInput,
   TouchableOpacity,
-  ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';  // Import Lottie
 
-const ForgotPassword = ({ navigation }) => {
+const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const navigation = useNavigation();
 
+  // Dismiss the keyboard when tapping outside input fields
   const dismissKeyboard = () => {
     Keyboard.dismiss();
+  };
+
+  // Validate email format and proceed with password reset
+  const validateAndResetPassword = () => {
+    if (!email) {
+      Alert.alert('Validation Error', 'Please enter your email address.');
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Validation Error', 'Please provide a valid email address.');
+      return;
+    }
+    // Navigate to Password Reset Screen after successful validation
+    navigation.navigate('PasswordReset');
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        {/* Background Image */}
-        <ImageBackground
-          source={require('../final/assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover"
-          style={styles.image}
-        />
-        
-        {/* Top Image (Green Bar) */}
-        <View style={styles.topImage}>
-          <Image source={require('../final/assets/Intersect.png')} style={styles.imageStyle} />
+        {/* Lottie Animation at the Top */}
+        <View style={styles.animationContainer}>
+          <LottieView
+            source={require('../final/assets/ts.json')} // Path to your Lottie animation file
+            autoPlay
+            loop
+            style={styles.animatedIcon}
+            speed={9} // Speed up the animation
+          />
         </View>
 
-        {/* Form */}
+        {/* Page Title */}
+        <Text style={styles.title}>Forgot Password</Text>
+
+        {/* Form Inputs */}
         <View style={styles.formContainer}>
-          <Text style={styles.title}>Forgot Password</Text>
-          <Text style={styles.subtitle}>Please enter your email to reset the password</Text>
+          <Text style={styles.label}>Email Address</Text>
           <TextInput
-            style={styles.input}
-            placeholder="Enter Your Email"
-            placeholderTextColor="#999"
-            keyboardType="email-address"
+            style={styles.textInput}
             value={email}
             onChangeText={setEmail}
+            placeholder="Enter your email address"
+            placeholderTextColor="#aaa"
+            keyboardType="email-address"
+            autoCapitalize="none"
           />
 
           {/* Reset Password Button */}
-          <TouchableOpacity
-            style={styles.loginButton}
-            onPress={() => {
-              // You can add a check for email format or other validation here
-              navigation.navigate('PasswordReset');
-            }}
-          >
+          <TouchableOpacity style={styles.loginButton} onPress={validateAndResetPassword}>
             <LinearGradient
-              colors={['#83CE2C', '#426816']}
-              style={styles.gradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              colors={['#72C21B', '#81CE2C', '#426816']} // Gradient for button
+              style={styles.loginButtonGradient}
             >
               <Text style={styles.loginButtonText}>Reset Password</Text>
             </LinearGradient>
           </TouchableOpacity>
         </View>
 
-        {/* Back to Login */}
+        {/* Back to Login Link */}
         <TouchableOpacity onPress={() => navigation.navigate('Login')}>
           <Text style={styles.link}>Back to Login</Text>
         </TouchableOpacity>
@@ -78,69 +90,67 @@ const ForgotPassword = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
-  topImage: {
+    backgroundColor: 'white', // Set background color to white
+    justifyContent: 'flex-start', // Align content at the top with a little space
     alignItems: 'center',
-    marginTop: -50, // Aligns the green bar similarly to Login
+    paddingTop: 60, // Increased padding to move the content down
   },
-  imageStyle: {
-    width: 450,
-    top: -10,
-    resizeMode: 'contain',
+  animationContainer: {
+    height: 200,  // Adjusted height to make it smaller
+    width: 200,   // Adjusted width to make it smaller
+    marginBottom: 20, // Reduced the space between animation and title
   },
-  formContainer: {
-    marginTop: 100, // Adjusted to maintain spacing consistency
-    paddingHorizontal: 40,
+  animatedIcon: {
+    width: 200,
+    height: 200, // Adjusted size of the animation
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 10,
-    color: '#000',
-    textAlign: 'center',
+    color: '#426816', // Dark green for title text
+    marginBottom: 20, // Reduced space between title and form
   },
-  subtitle: {
+  formContainer: {
+    width: '85%',
+    marginTop: 10, // Adjusted margin for form container
+  },
+  label: {
     fontSize: 16,
-    color: '#666',
-    marginBottom: 20,
-    textAlign: 'center',
+    color: '#426816', // Dark green for labels
+    marginBottom: 5,
   },
-  input: {
-    width: '100%',
+  textInput: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: '#81CE2C', // Light green border for inputs
     borderRadius: 8,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
-    color: '#000',
-    marginBottom: 20,
+    fontSize: 16,
+    color: '#426816', // Dark green for input text
+    backgroundColor: '#F5F5F5', // Light grey background for input fields
+    marginBottom: 15, // Reduced space between input and button
   },
   loginButton: {
-    marginTop: 20,
-    borderRadius: 8,
+    marginTop: 15,
+    borderRadius: 10,
     overflow: 'hidden',
   },
-  loginButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    textAlign: 'center',
-    fontWeight: 'bold',
-  },
-  gradient: {
+  loginButtonGradient: {
     paddingVertical: 15,
     alignItems: 'center',
-    borderRadius: 8,
+    borderRadius: 10,
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   link: {
-    color: '#4caf50',
-    marginTop: 15,
-    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 14,
+    color: '#426816', // Dark green for links
     textDecorationLine: 'underline',
-  },
-  image: {
-    justifyContent: 'center',
+    textAlign: 'center',
   },
 });
 

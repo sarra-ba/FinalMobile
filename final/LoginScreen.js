@@ -1,146 +1,107 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  Image,
   TextInput,
   TouchableOpacity,
-  Animated,
-  ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
-
-const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const animatedLabelPosition = useRef(new Animated.Value(value ? -10 : 15)).current;
-  const animatedLabelFontSize = useRef(new Animated.Value(value ? 15 : 15)).current;
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.timing(animatedLabelPosition, {
-      toValue: -20,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(animatedLabelFontSize, {
-      toValue: 16,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleBlur = () => {
-    if (!value) {
-      setIsFocused(false);
-      Animated.timing(animatedLabelPosition, {
-        toValue: 15,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedLabelFontSize, {
-        toValue: 16,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    }
-  };
-
-  return (
-    <View style={styles.inputContainer}>
-      <Animated.Text
-        style={[
-          styles.label,
-          {
-            top: animatedLabelPosition,
-            fontSize: animatedLabelFontSize,
-            color: isFocused || value ? 'black' : 'grey',
-          },
-        ]}
-      >
-        {label}
-      </Animated.Text>
-      <TextInput
-        style={styles.textInput}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-      {isFocused && (
-        <LinearGradient
-          colors={['#83CE2C', '#426816']}
-          style={styles.gradientBar}
-        />
-      )}
-    </View>
-  );
-};
+import { useNavigation } from '@react-navigation/native';
+import LottieView from 'lottie-react-native';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const navigation = useNavigation(); // Initialize navigation hook
+  const navigation = useNavigation();
 
+  // Function to dismiss the keyboard when tapping outside input fields
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  const handleLogin = () => {
-    // Add login logic here, then navigate to Dashboard
+  // Function to validate inputs and proceed with login
+  const validateAndLogin = () => {
+    if (!email) {
+      Alert.alert('Validation Error', 'Email is required.');
+      return;
+    }
+    if (!password) {
+      Alert.alert('Validation Error', 'Password is required.');
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      Alert.alert('Validation Error', 'Invalid email format.');
+      return;
+    }
+    // Navigate to Dashboard after successful validation
     navigation.navigate('Dashboard');
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        <ImageBackground
-          source={require('./assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover"
-          style={styles.image}
-        />
-        <View style={styles.topImage}>
-          <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
+        {/* Animated Icon */}
+        <View style={styles.animationContainer}>
+          <LottieView
+            source={require('./assets/wel.json')} // Animated asset for visual appeal
+            autoPlay
+            loop
+            style={styles.animatedIcon}
+          />
         </View>
 
+        {/* Page Title */}
+        <Text style={styles.title}>Welcome to Waste2Worth</Text>
+
+        {/* Form Inputs */}
         <View style={styles.formContainer}>
-          <FloatingLabelInput
-            label="Email"
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.textInput}
             value={email}
             onChangeText={setEmail}
+            placeholder="Enter your email"
+            placeholderTextColor="#aaa"
             keyboardType="email-address"
+            autoCapitalize="none"
           />
-          <FloatingLabelInput
-            label="Password"
+
+          <Text style={styles.label}>Password</Text>
+          <TextInput
+            style={styles.textInput}
             value={password}
             onChangeText={setPassword}
+            placeholder="Enter your password"
+            placeholderTextColor="#aaa"
             secureTextEntry
           />
 
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+          {/* Login Button */}
+          <TouchableOpacity style={styles.loginButton} onPress={validateAndLogin}>
             <LinearGradient
-              colors={['#83CE2C', '#6BA924', '#5C901F', '#426816']}
-              style={styles.gradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 0 }}
+              colors={['#72C21B', '#81CE2C', '#426816']} // Gradient for button
+              style={styles.loginButtonGradient}
             >
               <Text style={styles.loginButtonText}>Log In</Text>
             </LinearGradient>
           </TouchableOpacity>
+
+          {/* Forgot Password Link */}
+          <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+            <Text style={styles.link}>Forgot Password?</Text>
+          </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
-          <Text style={styles.link}>Forgot password?</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
-          <Text style={styles.link}>Don't have an account yet?</Text>
-        </TouchableOpacity>
+        {/* Footer Links */}
+        <View style={styles.footerLinks}>
+          <TouchableOpacity onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.footerLink}>Don’t have an account? Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -149,74 +110,74 @@ const LoginScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#white',
-  },
-  topImage: {
+    backgroundColor: 'white', // Set background color to white
+    justifyContent: 'center',
     alignItems: 'center',
   },
-  imageStyle: {
-    width: 450,
-    top: -10,
-    resizeMode: 'contain',
+  animationContainer: {
+    height: 150,
+    width: 150,
+    marginBottom: 20,
+  },
+  animatedIcon: {
+    width: 150,
+    height: 150,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#426816', // Dark green for title text
+    marginBottom: 30,
   },
   formContainer: {
-    marginTop: 120,
-    paddingHorizontal: 40,
-  },
-  inputContainer: {
-    marginBottom: 70,
-    position: 'relative',
-    borderColor: 'white',
-    borderRadius: 10,
-    backgroundColor: 'white',
-    height: 50,
-    justifyContent: 'center',
+    width: '85%',
   },
   label: {
-    position: 'absolute',
-    left: 15,
     fontSize: 16,
-    color: 'grey',
-    zIndex: 1,
+    color: '#426816', // Dark green for labels
+    marginBottom: 5,
   },
   textInput: {
-    borderBottomWidth: 4,
-    borderColor: 'transparent',
-    paddingBottom: 10,
+    height: 50,
+    borderWidth: 1,
+    borderColor: '#81CE2C', // Light green border for inputs
+    borderRadius: 8,
+    paddingHorizontal: 10,
     fontSize: 16,
+    color: '#426816', // Dark green for input text
+    backgroundColor: '#F5F5F5', // Light grey background for input fields
+    marginBottom: 20,
   },
   loginButton: {
-    marginLeft: 70,
-    borderRadius: 0,
     marginTop: 20,
+    borderRadius: 10,
     overflow: 'hidden',
-    width: '60%',
-    height: 90,
+  },
+  loginButtonGradient: {
+    paddingVertical: 15,
+    alignItems: 'center',
+    borderRadius: 10,
   },
   loginButtonText: {
     color: 'white',
-    fontSize: 20,
-  },
-  gradient: {
-    paddingVertical: 15,
-    alignItems: 'center',
-    borderRadius: 20,
-    marginBottom: 25,
-  },
-  gradientBar: {
-    height: 3,
-    width: '100%',
-    marginTop: 2,
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   link: {
-    color: '#4caf50',
-    marginTop: 10,
-    left: 50,
+    marginTop: 15,
+    fontSize: 14,
+    color: '#426816', // Dark green for links
     textDecorationLine: 'underline',
+    textAlign: 'center',
   },
-  image: {
-    justifyContent: 'center',
-    color: 'green',
+  footerLinks: {
+    marginTop: 30,
+    alignItems: 'center',
+  },
+  footerLink: {
+    fontSize: 14,
+    color: '#426816', // Dark green for footer links
+    textDecorationLine: 'underline',
   },
 });
 

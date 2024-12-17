@@ -84,7 +84,7 @@ const Navbar = () => {
   return (
     <View style={styles.container}>
       <ImageBackground
-        source={require('./assets/image_2024-12-03_151959045.svg')}
+        source={require('../final/assets/image_2024-12-03_151959045.svg')}
         resizeMode="cover" 
         style={styles.image}
       >
@@ -131,7 +131,7 @@ const Navbar = () => {
             onPress={() => toggleMenu('profile')}
           >
             <Image
-              source={require('./assets/user1.png')}
+              source={require('../final/assets/user1.png')}
               style={styles.icon}
             />
           </TouchableOpacity>

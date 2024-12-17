@@ -1,233 +1,146 @@
-import React, { useState, useRef } from 'react';
-import LinearGradient from 'react-native-linear-gradient'; 
-import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  ImageBackground,
-  TouchableOpacity,
-  Animated,
-  TextInput,
-  Keyboard,
-  TouchableWithoutFeedback
-} from 'react-native';
-import NavBar from './NavBar';  // Import the NavBar component
+import React from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'; // For icons (install via npm/yarn)
 
-const FloatingLabelInput = ({ label, value, onChangeText, secureTextEntry, keyboardType }) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const animatedLabelPosition = useRef(new Animated.Value(value ? -10 : 15)).current;
-  const animatedLabelFontSize = useRef(new Animated.Value(value ? 15 : 15)).current;
-
-  const handleFocus = () => {
-    setIsFocused(true);
-    Animated.timing(animatedLabelPosition, {
-      toValue: -20,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-    Animated.timing(animatedLabelFontSize, {
-      toValue: 16,
-      duration: 200,
-      useNativeDriver: false,
-    }).start();
-  };
-
-  const handleBlur = () => {
-    if (!value) {
-      setIsFocused(false);
-      Animated.timing(animatedLabelPosition, {
-        toValue: 15,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-      Animated.timing(animatedLabelFontSize, {
-        toValue: 16,
-        duration: 200,
-        useNativeDriver: false,
-      }).start();
-    }
-  };
-
+const ProfileScreen = ({ navigation }) => {
   return (
-    <View style={styles.inputContainer}>
-      <Animated.Text
-        style={[styles.label, {
-          top: animatedLabelPosition,
-          fontSize: animatedLabelFontSize,
-          color: isFocused || value ? 'white' : 'white',
-        }]}>
-        {label}
-      </Animated.Text>
-      <TextInput
-        style={styles.textInput}
-        value={value}
-        onChangeText={onChangeText}
-        secureTextEntry={secureTextEntry}
-        keyboardType={keyboardType}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-      />
-    </View>
-  );
-};
-
-const ProfileScreen = () => {
-  const [username, changeUsername] = useState('');
-  const [email, changeEmail] = useState('');
-  const [password, changePassword] = useState('');
-  const [location, changeLocation] = useState('');
-
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
-
-  return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container}>
-        <ImageBackground
-            source={require('./assets/background1.png)')}
-            style={styles.image}
-          imageStyle={styles.roundedBorder}>
-          
-          {/* Profile Image and Name */}
-          <View style={styles.profileContainer}>
-            <Image
-              source={require('./assets/user1.png')} // Add user's profile picture
-              style={styles.profileImage}
-            />
-            <Text style={styles.profileName}>John Doe</Text>  {/* Replace with actual username */}
-            <Text style={styles.profileAddress}>1234 Street Name, City, Country</Text>  {/* Replace with actual address */}
-          </View>
-          
-          <View style={styles.formContainer}>
-            <FloatingLabelInput
-              label="Username"
-              value={username}
-              onChangeText={changeUsername}
-            />
-            <FloatingLabelInput
-              label="Email"
-              value={email}
-              onChangeText={changeEmail}
-              keyboardType="email-address"
-            />
-            <FloatingLabelInput
-              label="Password"
-              value={password}
-              onChangeText={changePassword}
-              secureTextEntry
-            />
-            <FloatingLabelInput
-              label="Location"
-              value={location}
-              onChangeText={changeLocation}
-            />
-            <TouchableOpacity style={styles.confirmButton}>
-              <Text style={styles.confirmButtonText}>Confirm</Text>
-            </TouchableOpacity>
-          </View>
-        </ImageBackground>
-
-        {/* Use NavBar Component */}
-        <NavBar /> {/* This replaces the navbar code */}
+    <ScrollView contentContainerStyle={styles.container}>
+      {/* Profile Header */}
+      <View style={styles.header}>
+        <Image
+          source={require('./assets/user1.png')} // User profile picture
+          style={styles.profileImage}
+        />
+        <Text style={styles.username}>John Doe</Text>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => navigation.navigate('EditProfile')}
+        >
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+
+      {/* Account Settings Section */}
+      <View style={styles.settingContainer}>
+        <Text style={styles.sectionTitle}>Account Settings</Text>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Icon name="notifications-outline" size={20} color="#6DBE45" />
+          <Text style={styles.settingText}>Notifications</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Icon name="cart-outline" size={20} color="#6DBE45" />
+          <Text style={styles.settingText}>Order</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Icon name="stats-chart-outline" size={20} color="#6DBE45" />
+          <Text style={styles.settingText}>Dashboard</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Preferences Section */}
+      <View style={styles.settingContainer}>
+        <Text style={styles.sectionTitle}>Preferences</Text>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Icon name="language-outline" size={20} color="#6DBE45" />
+          <Text style={styles.settingText}>Language</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingItem}>
+          <Icon name="moon-outline" size={20} color="#6DBE45" />
+          <Text style={styles.settingText}>Dark Mode</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Logout Button */}
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => navigation.navigate('LogoutConfirmation')}
+      >
+        <Text style={styles.logoutText}>Logout</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    flexGrow: 1,
+    backgroundColor: '#F6F6F6',
+    paddingVertical: 20,
   },
-  image: {
-    width: 411,
-    height: 720,
-    top: 130,
-    borderRadius: 30,
-  },
-  roundedBorder: {
-    borderRadius: 50,
-  },
-  profileContainer: {
+  header: {
     alignItems: 'center',
-    marginTop: 30,
+    paddingVertical: 10, // Reduced padding to move it up
+    marginBottom: 10, // Adjust margin for compact layout
   },
   profileImage: {
-    width: 120,
-    height: 120,
-    borderRadius: 60, // Circular image
+    width: 100, // Adjust size for compactness
+    height: 100,
+    borderRadius: 50,
     borderWidth: 4,
     borderColor: '#fff',
+    marginBottom: 5, // Reduced margin to move image up
   },
-  profileName: {
-    fontSize: 24,
-    color: '#fff',
+  username: {
+    fontSize: 20, // Slightly smaller font for compact layout
+    color: '#333', // Changed text color to dark for better visibility
     fontWeight: 'bold',
-    marginTop: 10,
+    marginBottom: 5, // Reduced margin for compact layout
   },
-  profileAddress: {
-    fontSize: 16,
-    color: '#fff',
-    marginTop: 5,
-  },
-  headerContainer: {
-    alignItems: 'center',
-  },
-  headerText: {
-    fontSize: 40,
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    top: 13,
-    fontFamily: 'notoserif',
-  },
-  leaf: {
-    position: 'absolute',
-    top: -90,
-    right: -8,
-    width: 120,
-    height: 120,
-    resizeMode: 'contain',
-  },
-  formContainer: {
-    width: '100%',
-    backgroundColor: 'transparent',
-    padding: 20,
-    marginTop: 20,
-  },
-  inputContainer: {
-    marginBottom: 50,
-  },
-  label: {
-    position: 'absolute',
-    left: 10,
-    color: 'white',
-  },
-  textInput: {
-    top: 20,
-    borderBottomWidth: 3,
-    borderBottomColor: 'white',
-    paddingVertical: 10,
-    fontSize: 15,
-  },
-  confirmButton: {
-    marginTop: 20,
+  editButton: {
+    backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    paddingVertical: 5, // Reduced padding for compactness
     borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#426816',
-    height: 44,
-    width: 130,
-    left: 210,
-    top: 60,
+    marginTop: 5, // Reduced margin to keep button closer to the text
   },
-  confirmButtonText: {
-    color: 'white',
+  editButtonText: {
+    color: '#6DBE45',
+    fontWeight: 'bold',
+  },
+  settingContainer: {
+    marginTop: 20,
+    paddingHorizontal: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    color: '#333',
+    fontWeight: 'bold',
+    marginBottom: 12,
+  },
+  settingItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 12,
+    shadowColor: '#ccc',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+  },
+  settingText: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 15,
+  },
+  logoutButton: {
+    backgroundColor: '#F44336',
+    marginHorizontal: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+    borderRadius: 10,
+    marginTop: 30,
+  },
+  logoutText: {
+    color: '#fff',
     fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 9,
-    marginLeft: 30,
   },
 });
 

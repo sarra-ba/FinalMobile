@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,201 +6,179 @@ import {
   Image,
   TextInput,
   TouchableOpacity,
+  ScrollView,
   ImageBackground,
-  Keyboard,
-  TouchableWithoutFeedback,
-  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
-import NavBar from './NavBar'; // Import NavBar component
-import LinearGradient from 'react-native-linear-gradient';
+import NavBar from './NavBar';
 
 const MarketPlace = ({ navigation }) => {
   const [search, setSearch] = useState('');
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const products = [
+    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png') },
+    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png') },
+    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png') },
+    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png') },
+  ];
 
   const handleFilterPress = () => {
-    navigation.navigate('Filter'); // Navigate to FilterPage
-  };
-
-  const handleSortPress = () => {
-    console.log("Sort pressed");
+    navigation.navigate('Filter');
   };
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.container}>
-        <ImageBackground
-          source={require('./assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover"
-          style={styles.image}
-        />
-        <View style={styles.topImage}>
-          <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
-        </View> 
-
-        {/* searchbar */}
+    <View style={styles.container}>
+      {/* Header Background */}
+      <ImageBackground
+        source={require('./assets/background1.png')}
+        style={styles.headerBackground}>
+        <Text style={styles.headerTitle}>Marketplace</Text>
+        {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <View style={styles.searchBar}>
-            <Icon name="search" size={20} color="grey" />
-            <TextInput
-              style={styles.searchInput}
-              placeholder="Type your product..."
-              value={search}
-              onChangeText={setSearch}
-            />
-          </View>
+          <Icon name="search" size={20} color="grey" style={styles.searchIcon} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Search for fertilizers..."
+            value={search}
+            onChangeText={setSearch}
+          />
         </View>
+      </ImageBackground>
 
-        {/* Filter and Sort buttons */}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={handleFilterPress}>
-            <View style={styles.iconTextContainer}>
-              <Icon name="filter" size={15} color="#83CE2C" style={styles.miniicon} />
-              <Text style={styles.buttonText}>Filter</Text> {/* Text wrapped correctly */}
-            </View>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.button} onPress={handleSortPress}>
-            <View style={styles.iconTextContainer}>
-              <Icon name="sort" size={15} color="#83CE2C" style={styles.miniicon} />
-              <Text style={styles.buttonText}>Sort</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-
-        {/* navbar */}
-        <View style={styles.navBar}>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/fertilizer.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/bell.png')} 
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/recycle-sign1.png')} 
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/user1.png')}
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navItem}>
-            <Image
-              source={require('./assets/menu.png')} 
-              style={styles.icon}
-            />
-          </TouchableOpacity>
-        </View>
-
-        {/* Navbar Component */}
-        <NavBar /> {/* Ensure NavBar component returns valid JSX */}
-
+      {/* Filter & Sort Buttons */}
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.button} onPress={handleFilterPress}>
+          <Icon name="filter" size={18} color="white" />
+          <Text style={styles.buttonText}>Filter</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Icon name="sort" size={18} color="white" />
+          <Text style={styles.buttonText}>Sort</Text>
+        </TouchableOpacity>
       </View>
-    </TouchableWithoutFeedback>
+
+      {/* Product List */}
+      <ScrollView contentContainerStyle={styles.productList}>
+        {products.map((item) => (
+          <View key={item.id} style={styles.card}>
+            <Image source={item.image} style={styles.productImage} />
+            <Text style={styles.productName}>{item.name}</Text>
+            <Text style={styles.productPrice}>{item.price}</Text>
+            <TouchableOpacity style={styles.buyButton}>
+              <Text style={styles.buyButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </ScrollView>
+
+      {/* Bottom Navigation Bar */}
+      <NavBar />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f9f9f9',
   },
-  topImage: {
-    alignItems: 'center',
-  },
-  imageStyle: {
-    width: 450,
-    top: -10,
-    resizeMode: 'contain',
-  },
-  image: {
+  headerBackground: {
+    height: 200,
     justifyContent: 'center',
-    color: 'green',
+    alignItems: 'center',
+    paddingTop: 30,
   },
-  navBar: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-    backgroundColor: 'white',
-    borderTopWidth: 1,
-    borderTopColor: '#83CE2C',
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30,
-    height: 30,
-    resizeMode: 'contain',
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 10,
   },
   searchContainer: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginHorizontal: 16,
-    marginTop: -40,
-  },
-  searchBar: {
-    flex: 1,
-    flexDirection: 'row',
-    alignItems: 'center',
     backgroundColor: 'white',
-    borderRadius: 20,
-    paddingHorizontal: 8,
-    height: 40,
-    top: 90,
-    borderWidth: 1,
-    borderColor: '#83CE2C',
+    borderRadius: 25,
+    width: '90%',
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  searchIcon: {
+    marginRight: 10,
   },
   searchInput: {
     flex: 1,
-    marginLeft: 8,
-  },
-  miniicon: {
-    width: 20,
-    height: 20,
-    marginRight: 2,
+    height: 40,
   },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginTop: 10,
-    padding: 10,
-    top: 120,
+    marginVertical: 10,
   },
   button: {
-    backgroundColor: 'white',
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#83CE2C",
-  },
-  buttonText: {
-    color: 'gray',
-    fontSize: 15,
-    fontWeight: 'bold',
-    marginLeft: 8,
-  },
-  iconTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#83CE2C',
+    padding: 10,
+    borderRadius: 20,
+    width: '45%',
+    justifyContent: 'center',
+  },
+  buttonText: {
+    marginLeft: 5,
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  productList: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+  },
+  card: {
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 15,
+    width: '45%',
+    marginVertical: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  productImage: {
+    width: 80,
+    height: 80,
+    resizeMode: 'contain',
+    marginBottom: 10,
+  },
+  productName: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 5,
+    color: '#333',
+  },
+  productPrice: {
+    fontSize: 14,
+    color: '#777',
+    marginBottom: 10,
+  },
+  buyButton: {
+    backgroundColor: '#83CE2C',
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  buyButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 

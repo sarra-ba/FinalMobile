@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import LinearGradient from 'react-native-linear-gradient'; 
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import Navbar from './NavBar';  // Import Navbar component
 
 const FilterPage = () => {
   const [category, setCategory] = useState('');
@@ -21,42 +21,11 @@ const FilterPage = () => {
         resizeMode="cover"
         style={styles.image}
       />
+      
+      {/* Top Image */}
       <View style={styles.topImage}>
         <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
       </View>  
-      
-      <View style={styles.navBar}>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/fertilizer.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/bell.png')} 
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/recycle-sign1.png')} 
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/user1.png')}
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Image
-            source={require('./assets/menu.png')} 
-            style={styles.icon}
-          />
-        </TouchableOpacity>
-      </View>
 
       {/* Header */}
       <View style={styles.header}>
@@ -127,6 +96,9 @@ const FilterPage = () => {
           <Text style={styles.applyButtonText}>Apply Filters</Text>
         </LinearGradient>
       </TouchableOpacity>
+
+      {/* Bottom Navbar */}
+      <Navbar />  {/* Use Navbar component */}
     </View>
   );
 };
@@ -147,37 +119,15 @@ const styles = StyleSheet.create({
   },
   image: {
     justifyContent: 'center',
-    color: 'green',
-  },
-  navBar: {
-    position: 'absolute', 
-    bottom: 0,           
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingVertical: 8,
-    backgroundColor: 'white',
-    borderTopWidth: 1,    
-    borderTopColor: 'green', 
-  },
-  navItem: {
-    padding: 10,
-  },
-  icon: {
-    width: 30, 
-    height: 30, 
-    resizeMode: 'contain',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingBottom: 10,
+    paddingVertical: 10,
     backgroundColor: 'white',
-    bordecolor : '#83CE2C' ,
-    paddingTop: 10,
-    top : 30
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   headerButton: {
     padding: 10,
@@ -187,8 +137,9 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
   filterContainer: {
+    flex: 1,
     paddingHorizontal: 16,
-    top : 100,
+    marginTop: 10,
   },
   filterOption: {
     marginBottom: 20,
@@ -196,7 +147,7 @@ const styles = StyleSheet.create({
   filterLabel: {
     fontSize: 16,
     fontWeight: 'bold',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   picker: {
     height: 50,
@@ -204,7 +155,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingLeft: 8,
-    paddingTop : 60
   },
   applyButtonText: {
     fontSize: 16,
@@ -215,10 +165,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     borderRadius: 20,
-    marginBottom: 25,
-    width : 200,
-    left : 110,
-    bottom : 120,
+    marginHorizontal: 50,
+    marginTop: 10,
   },
 });
 
