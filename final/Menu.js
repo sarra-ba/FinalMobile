@@ -9,8 +9,10 @@ import {
   ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import LinearGradient from 'react-native-linear-gradient'; 
 import NavBar from './NavBar'; // Import the NavBar component
 
 const MenuScreen = () => {
@@ -56,7 +58,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'white',
-    justifyContent: 'space-between', // Ensure spacing for bottom button
+  },
+  image: {
+    justifyContent: 'center',
+    color: 'green',
   },
   topImage: {
     alignItems: 'center',
@@ -66,25 +71,18 @@ const styles = StyleSheet.create({
     top: -10,
     resizeMode: 'contain',
   },
-  image: {
-    justifyContent: 'center',
-    color: 'green',
-    flex: 1,
-  },
   buttonContainer: {
+    marginTop: 20,
     alignItems: 'center',
-    marginBottom: 30, // Add spacing at the bottom
   },
   button: {
-    backgroundColor: '#e91e63',
-    paddingVertical: 12,
-    paddingHorizontal: 40,
-    borderRadius: 8,
+    backgroundColor: '#426816',
+    padding: 10,
+    borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: 'white',
     fontWeight: 'bold',
-    fontSize: 16,
   },
 });
 

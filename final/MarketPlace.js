@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,9 +9,11 @@ import {
   ImageBackground,
   Keyboard,
   TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import NavBar from './NavBar'; // Import NavBar component
+import LinearGradient from 'react-native-linear-gradient';
 
 const MarketPlace = ({ navigation }) => {
   const [search, setSearch] = useState('');
@@ -33,7 +35,7 @@ const MarketPlace = ({ navigation }) => {
       <View style={styles.container}>
         <ImageBackground
           source={require('./assets/image_2024-12-03_151959045.svg')}
-          resizeMode="cover" 
+          resizeMode="cover"
           style={styles.image}
         />
         <View style={styles.topImage}>
@@ -64,8 +66,42 @@ const MarketPlace = ({ navigation }) => {
           <TouchableOpacity style={styles.button} onPress={handleSortPress}>
             <View style={styles.iconTextContainer}>
               <Icon name="sort" size={15} color="#83CE2C" style={styles.miniicon} />
-              <Text style={styles.buttonText}>Sort</Text> {/* Text wrapped correctly */}
+              <Text style={styles.buttonText}>Sort</Text>
             </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* navbar */}
+        <View style={styles.navBar}>
+          <TouchableOpacity style={styles.navItem}>
+            <Image
+              source={require('./assets/fertilizer.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem}>
+            <Image
+              source={require('./assets/bell.png')} 
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem}>
+            <Image
+              source={require('./assets/recycle-sign1.png')} 
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem}>
+            <Image
+              source={require('./assets/user1.png')}
+              style={styles.icon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navItem}>
+            <Image
+              source={require('./assets/menu.png')} 
+              style={styles.icon}
+            />
           </TouchableOpacity>
         </View>
 
@@ -94,6 +130,26 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: 'green',
   },
+  navBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 8,
+    backgroundColor: 'white',
+    borderTopWidth: 1,
+    borderTopColor: '#83CE2C',
+  },
+  navItem: {
+    padding: 10,
+  },
+  icon: {
+    width: 30,
+    height: 30,
+    resizeMode: 'contain',
+  },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -108,9 +164,9 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 8,
     height: 40,
-    top : 90,
-    borderWidth : 1,
-    borderColor : '#83CE2C'
+    top: 90,
+    borderWidth: 1,
+    borderColor: '#83CE2C',
   },
   searchInput: {
     flex: 1,
@@ -119,9 +175,8 @@ const styles = StyleSheet.create({
   miniicon: {
     width: 20,
     height: 20,
-    marginRight: 2,     
+    marginRight: 2,
   },
-
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -130,7 +185,7 @@ const styles = StyleSheet.create({
     top: 120,
   },
   button: {
-    backgroundColor: 'white', 
+    backgroundColor: 'white',
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 10,
@@ -141,12 +196,12 @@ const styles = StyleSheet.create({
     color: 'gray',
     fontSize: 15,
     fontWeight: 'bold',
-    marginLeft: 8, 
+    marginLeft: 8,
   },
   iconTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-  }
+  },
 });
 
 export default MarketPlace;

@@ -1,24 +1,17 @@
-// Filter.js
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ImageBackground, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import LinearGradient from 'react-native-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient'; 
 import { useNavigation } from '@react-navigation/native'; // Import navigation hook
-import NavBar from './NavBar'; // Import the NavBar component
 
-const Filter = () => {
+const FilterPage = () => {
   const [category, setCategory] = useState('');
   const [priceRange, setPriceRange] = useState('');
   const [customerReview, setCustomerReview] = useState('');
 
-  const navigation = useNavigation(); // Hook to access navigation
-
   const handleApplyFilters = () => {
-    // You can log or save the filters if necessary
+    // Handle the apply filter logic here
     console.log('Filters Applied:', { category, priceRange, customerReview });
-
-    // Navigate to the Marketplace screen after applying filters
-    navigation.navigate('Marketplace', { category, priceRange, customerReview });
   };
 
   return (
@@ -30,6 +23,39 @@ const Filter = () => {
       />
       <View style={styles.topImage}>
         <Image source={require('./assets/Intersect.png')} style={styles.imageStyle} />
+      </View>  
+      
+      <View style={styles.navBar}>
+        <TouchableOpacity style={styles.navItem}>
+          <Image
+            source={require('./assets/fertilizer.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Image
+            source={require('./assets/bell.png')} 
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Image
+            source={require('./assets/recycle-sign1.png')} 
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Image
+            source={require('./assets/user1.png')}
+            style={styles.icon}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.navItem}>
+          <Image
+            source={require('./assets/menu.png')} 
+            style={styles.icon}
+          />
+        </TouchableOpacity>
       </View>
 
       {/* Header */}
@@ -53,9 +79,9 @@ const Filter = () => {
             onValueChange={(itemValue) => setCategory(itemValue)}
           >
             <Picker.Item label="Select Category" value="" />
-            <Picker.Item label="Fertilizer" value="fertilizer" />
-            <Picker.Item label="Soil Enrichers" value="soil" />
-            <Picker.Item label="Compost" value="compost" />
+            <Picker.Item label="Electronics" value="electronics" />
+            <Picker.Item label="Furniture" value="furniture" />
+            <Picker.Item label="Clothing" value="clothing" />
           </Picker>
         </View>
 
@@ -101,9 +127,6 @@ const Filter = () => {
           <Text style={styles.applyButtonText}>Apply Filters</Text>
         </LinearGradient>
       </TouchableOpacity>
-
-      {/* Use the NavBar component here */}
-      <NavBar />
     </View>
   );
 };
@@ -126,15 +149,35 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     color: 'green',
   },
+  navBar: {
+    position: 'absolute', 
+    bottom: 0,           
+    left: 0,
+    right: 0,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 8,
+    backgroundColor: 'white',
+    borderTopWidth: 1,    
+    borderTopColor: 'green', 
+  },
+  navItem: {
+    padding: 10,
+  },
+  icon: {
+    width: 30, 
+    height: 30, 
+    resizeMode: 'contain',
+  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingBottom: 10,
     backgroundColor: 'white',
-    bordecolor: '#83CE2C',
+    bordecolor : '#83CE2C' ,
     paddingTop: 10,
-    top: 30,
+    top : 30
   },
   headerButton: {
     padding: 10,
@@ -145,7 +188,7 @@ const styles = StyleSheet.create({
   },
   filterContainer: {
     paddingHorizontal: 16,
-    top: 100,
+    top : 100,
   },
   filterOption: {
     marginBottom: 20,
@@ -161,6 +204,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingLeft: 8,
+    paddingTop : 60
   },
   applyButtonText: {
     fontSize: 16,
@@ -172,10 +216,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     marginBottom: 25,
-    width: 200,
-    left: 110,
-    bottom: 120,
+    width : 200,
+    left : 110,
+    bottom : 120,
   },
 });
 
-export default Filter;
+export default FilterPage;

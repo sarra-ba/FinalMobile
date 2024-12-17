@@ -86,8 +86,8 @@ const ProfileScreen = () => {
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         <ImageBackground
-          source={require('./assets/background1.png')}
-          style={styles.image}
+            source={require('./assets/background1.png)')}
+            style={styles.image}
           imageStyle={styles.roundedBorder}>
           
           {/* Profile Image and Name */}
