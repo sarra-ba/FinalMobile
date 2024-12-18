@@ -49,12 +49,12 @@ const styles = StyleSheet.create({
   successMessage: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#4caf50', // Green color for success message
+    color: '#83CE2C',
     marginBottom: 20, // Space between message and sub-message
   },
   subMessage: {
     fontSize: 16,
-    color: '#666', // Light grey for the sub-message
+    color: '#70BE19'
   },
 });
 

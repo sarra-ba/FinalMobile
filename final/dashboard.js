@@ -16,10 +16,7 @@ const DashboardScreen = () => {
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>Farmer's Dashboard</Text>
         </View>
-        <Image
-          source={require('./assets/leaf-removebg-preview1.png')}
-          style={styles.leaf}
-        />
+       
       </ImageBackground>
 
       {/* Content Section */}
@@ -92,10 +89,7 @@ const styles = StyleSheet.create({
     height: 200, // Adjusted height to bring the background up
     borderRadius: 30,
   },
-  roundedBorder: {
-    borderBottomLeftRadius: 50,
-    borderBottomRightRadius: 50,
-  },
+  
   headerContainer: {
     alignItems: 'center',
     marginTop: 69, // Adjusted to bring the header up
@@ -107,14 +101,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: 'notoserif',
   },
-  leaf: {
-    position: 'absolute',
-    top: -20, // Adjusted to bring the leaf up
-    right: -8,
-    width: 100,
-    height: 100,
-    resizeMode: 'contain',
-  },
+
   contentContainer: {
     flex: 1,
     marginHorizontal: 10,
