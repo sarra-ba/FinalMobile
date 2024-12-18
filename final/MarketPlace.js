@@ -8,30 +8,54 @@ import {
   TouchableOpacity,
   ScrollView,
   ImageBackground,
+  Modal,
+  FlatList,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import NavBar from './NavBar';
 
 const MarketPlace = ({ navigation }) => {
   const [search, setSearch] = useState('');
+  const [products, setProducts] = useState([
+    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png'), date: '2023-01-01' },
+    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png'), date: '2023-05-10' },
+    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png'), date: '2023-07-15' },
+    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png'), date: '2023-02-20' },
+  ]);
+  const [sortModalVisible, setSortModalVisible] = useState(false);
 
-  const products = [
-    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png') },
-    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png') },
-    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png') },
-    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png') },
-  ];
+  // Handle Add to Cart
+  const handleAddToCart = (product) => {
+    navigation.navigate('Cart', { product });
+  };
 
-  const handleFilterPress = () => {
-    navigation.navigate('Filter');
+  // Filter products based on search input
+  const filteredProducts = products.filter((product) =>
+    product.name.toLowerCase().includes(search.toLowerCase())
+  );
+
+  // Handle Sort options
+  const handleSortPress = () => {
+    setSortModalVisible(true);
+  };
+
+  const handleSort = (sortOption) => {
+    let sortedProducts = [...products];
+    if (sortOption === 'alphabet') {
+      sortedProducts.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === 'newest') {
+      sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    } else if (sortOption === 'oldest') {
+      sortedProducts.sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+    setProducts(sortedProducts);
+    setSortModalVisible(false);
   };
 
   return (
     <View style={styles.container}>
       {/* Header Background */}
-      <ImageBackground
-        source={require('./assets/background1.png')}
-        style={styles.headerBackground}>
+      <ImageBackground source={require('./assets/background1.png')} style={styles.headerBackground}>
         <Text style={styles.headerTitle}>Marketplace</Text>
         {/* Search Bar */}
         <View style={styles.searchContainer}>
@@ -47,25 +71,67 @@ const MarketPlace = ({ navigation }) => {
 
       {/* Filter & Sort Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={handleFilterPress}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Filter')}>
           <Icon name="filter" size={18} color="white" />
           <Text style={styles.buttonText}>Filter</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={handleSortPress}>
           <Icon name="sort" size={18} color="white" />
           <Text style={styles.buttonText}>Sort</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Sort Modal */}
+      <Modal
+        transparent={true}
+        visible={sortModalVisible}
+        animationType="slide"
+        onRequestClose={() => setSortModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Sort By</Text>
+            <FlatList
+              data={[
+                { key: 'Alphabetically', value: 'alphabet' },
+                { key: 'Newest', value: 'newest' },
+                { key: 'Oldest', value: 'oldest' },
+              ]}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.sortOption} onPress={() => handleSort(item.value)}>
+                  <Text style={styles.sortOptionText}>{item.key}</Text>
+                </TouchableOpacity>
+              )}
+              keyExtractor={(item) => item.value}
+            />
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setSortModalVisible(false)}
+            >
+              <Text style={styles.closeModalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
       {/* Product List */}
       <ScrollView contentContainerStyle={styles.productList}>
-        {products.map((item) => (
+        {filteredProducts.map((item) => (
           <View key={item.id} style={styles.card}>
             <Image source={item.image} style={styles.productImage} />
             <Text style={styles.productName}>{item.name}</Text>
             <Text style={styles.productPrice}>{item.price}</Text>
-            <TouchableOpacity style={styles.buyButton}>
+            <TouchableOpacity
+              style={styles.buyButton}
+              onPress={() => handleAddToCart(item)}
+            >
               <Text style={styles.buyButtonText}>Add to Cart</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.reviewButton}
+              onPress={() => navigation.navigate('Review', { product: item })}
+            >
+              <Text style={styles.buyButtonText}>Review</Text>
             </TouchableOpacity>
           </View>
         ))}
@@ -175,8 +241,53 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingVertical: 5,
     paddingHorizontal: 10,
+    marginBottom: 5,
   },
   buyButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  reviewButton: {
+    backgroundColor: '#FFB300',
+    borderRadius: 20,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  sortOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  sortOptionText: {
+    fontSize: 16,
+  },
+  closeModalButton: {
+    backgroundColor: '#83CE2C',
+    borderRadius: 20,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  closeModalButtonText: {
     color: 'white',
     fontWeight: 'bold',
   },

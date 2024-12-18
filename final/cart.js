@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import LottieView from 'lottie-react-native';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation for navigation
+import { useNavigation, useRoute } from '@react-navigation/native'; // Import useRoute for receiving params
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState([
@@ -20,6 +20,19 @@ const Cart = () => {
   ]);
 
   const navigation = useNavigation(); // Initialize navigation
+  const route = useRoute(); // Use route to get parameters passed from the Marketplace screen
+
+  // Handle adding a product to the cart
+  const handleAddToCart = (product) => {
+    setCartItems((prevItems) => [...prevItems, product]); // Add the new product to the cart
+  };
+
+  // If the route has a product (when navigating from the Marketplace), add it to the cart
+  useEffect(() => {
+    if (route.params?.product) {
+      handleAddToCart(route.params.product);
+    }
+  }, [route.params?.product]);
 
   const handleRemoveItem = (id) => {
     setCartItems(cartItems.filter(item => item.id !== id));

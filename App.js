@@ -20,7 +20,7 @@ import Payment from './final/Payment';
 
 import SetLocation from './final/SetLocation';
 import TrackOrder from './final/TrackOrder';
-
+import Review from './final/Review'; // Import the Review screen
 
 // Importing password recovery flow screens
 import ForgotPassword from './screens/ForgotPassword';
@@ -61,7 +61,7 @@ export default function App() {
            // Text color in header
           // Center the header title
         }}  />
-
+        <Stack.Screen name="Review" component={Review} />  
         {/* Profile Screen with Header */}
         <Stack.Screen 
           name="Profile" 
@@ -82,9 +82,7 @@ export default function App() {
           options={{
             headerShown: true,
             title: 'Edit Profile',
-            headerStyle: { backgroundColor: '#4CAF50' },
-            headerTintColor: '#fff',
-            headerTitleAlign: 'center',
+          
           }} 
         />
 
