@@ -1,144 +1,230 @@
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons'; // For icons (install via npm/yarn)
+import LinearGradient from 'react-native-linear-gradient'; // For gradient styling
+import { useNavigation } from '@react-navigation/native';
 
-const ProfileScreen = ({ navigation }) => {
+const ProfileScreen = () => {
+  const [search, setSearch] = useState('');
+  const [darkMode, setDarkMode] = useState(false); // State to toggle dark mode
+  const navigation = useNavigation();
+
+  // Function to toggle dark mode
+  const toggleDarkMode = () => {
+    setDarkMode(!darkMode);
+  };
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      {/* Profile Header */}
-      <View style={styles.header}>
+    <View style={[styles.container, darkMode && styles.darkContainer]}>
+      {/* Header with ImageBackground */}
+      <ImageBackground
+        source={require('./assets/background1.png')} // Use your desired background image
+        style={[styles.headerBackground, darkMode && styles.darkHeaderBackground]}>
         <Image
-          source={require('./assets/user1.png')} // User profile picture
+          source={require('./assets/user1.png')} // Profile image
           style={styles.profileImage}
         />
-        <Text style={styles.username}>John Doe</Text>
+        <Text style={[styles.username, darkMode && styles.darkText]}>John Doe</Text>
         <TouchableOpacity
           style={styles.editButton}
-          onPress={() => navigation.navigate('EditProfile')}
-        >
-          <Text style={styles.editButtonText}>Edit Profile</Text>
+          onPress={() => navigation.navigate('EditProfile')}>
+          <Text style={[styles.editButtonText, darkMode && styles.darkText]}>Edit Profile</Text>
         </TouchableOpacity>
+      </ImageBackground>
+
+      {/* Search Bar */}
+      <View style={[styles.searchContainer, darkMode && styles.darkSearchContainer]}>
+        <Icon name="search" size={20} color={darkMode ? 'white' : 'grey'} style={styles.searchIcon} />
+        <TextInput
+          style={[styles.searchInput, darkMode && styles.darkInput]}
+          placeholder="Search for settings..."
+          value={search}
+          onChangeText={setSearch}
+        />
       </View>
 
-      {/* Account Settings Section */}
-      <View style={styles.settingContainer}>
-        <Text style={styles.sectionTitle}>Account Settings</Text>
+      {/* Content Section */}
+      <ScrollView contentContainerStyle={styles.contentContainer}>
+        {/* Account Settings */}
+        <View style={styles.sectionContainer}>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Account Settings</Text>
+          <TouchableOpacity
+            style={[styles.itemContainer, darkMode && styles.darkItemContainer]}
+            onPress={() => navigation.navigate('Notifications')}>
+            <Icon name="notifications-outline" size={24} color={darkMode ? '#82CE2B' : '#6DBE45'} />
+            <Text style={[styles.itemText, darkMode && styles.darkText]}>Notifications</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.itemContainer, darkMode && styles.darkItemContainer]}
+            onPress={() => navigation.navigate('Cart')}>
+            <Icon name="cart-outline" size={24} color={darkMode ? '#82CE2B' : '#6DBE45'} />
+            <Text style={[styles.itemText, darkMode && styles.darkText]}>Orders</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.itemContainer, darkMode && styles.darkItemContainer]}
+            onPress={() => navigation.navigate('Menu')}>
+            <Icon name="stats-chart-outline" size={24} color={darkMode ? '#82CE2B' : '#6DBE45'} />
+            <Text style={[styles.itemText, darkMode && styles.darkText]}>Dashboard</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="notifications-outline" size={20} color="#6DBE45" />
-          <Text style={styles.settingText}>Notifications</Text>
-        </TouchableOpacity>
+        {/* Preferences Section */}
+        <View style={styles.sectionContainer}>
+          <Text style={[styles.sectionTitle, darkMode && styles.darkText]}>Preferences</Text>
+          <TouchableOpacity style={[styles.itemContainer, darkMode && styles.darkItemContainer]}>
+            <Icon name="language-outline" size={24} color={darkMode ? '#82CE2B' : '#6DBE45'} />
+            <Text style={[styles.itemText, darkMode && styles.darkText]}>Language</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.itemContainer, darkMode && styles.darkItemContainer]}
+            onPress={toggleDarkMode}>
+            <Icon name="moon-outline" size={24} color={darkMode ? '#82CE2B' : '#6DBE45'} />
+            <Text style={[styles.itemText, darkMode && styles.darkText]}>Dark Mode</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="cart-outline" size={20} color="#6DBE45" />
-          <Text style={styles.settingText}>Order</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="stats-chart-outline" size={20} color="#6DBE45" />
-          <Text style={styles.settingText}>Dashboard</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Preferences Section */}
-      <View style={styles.settingContainer}>
-        <Text style={styles.sectionTitle}>Preferences</Text>
-
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="language-outline" size={20} color="#6DBE45" />
-          <Text style={styles.settingText}>Language</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.settingItem}>
-          <Icon name="moon-outline" size={20} color="#6DBE45" />
-          <Text style={styles.settingText}>Dark Mode</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Logout Button */}
-      <TouchableOpacity
-        style={styles.logoutButton}
-        onPress={() => navigation.navigate('LogoutConfirmation')}
-      >
-        <Text style={styles.logoutText}>Logout</Text>
-      </TouchableOpacity>
-    </ScrollView>
+        {/* Logout Button with updated gradient */}
+        <LinearGradient
+          colors={['#82CE2B', '#70BE19']} // Updated gradient colors
+          style={styles.logoutButton}>
+          <TouchableOpacity onPress={() => navigation.navigate('LogoutConfirmation')}>
+            <Text style={styles.logoutText}>Logout</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexGrow: 1,
-    backgroundColor: '#F6F6F6',
-    paddingVertical: 20,
+    flex: 1,
+    backgroundColor: '#F9F9F9',
   },
-  header: {
+  darkContainer: {
+    backgroundColor: '#000',  // Dark mode background
+  },
+  headerBackground: {
+    height: 250,
+    justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 10, // Reduced padding to move it up
-    marginBottom: 10, // Adjust margin for compact layout
+    paddingTop: 40,
+  },
+  darkHeaderBackground: {
+    backgroundColor: '#333', // Dark header background
   },
   profileImage: {
-    width: 100, // Adjust size for compactness
-    height: 100,
-    borderRadius: 50,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     borderWidth: 4,
     borderColor: '#fff',
-    marginBottom: 5, // Reduced margin to move image up
   },
   username: {
-    fontSize: 20, // Slightly smaller font for compact layout
-    color: '#333', // Changed text color to dark for better visibility
+    fontSize: 22,
     fontWeight: 'bold',
-    marginBottom: 5, // Reduced margin for compact layout
+    color: '#fff',
+    marginTop: 10,
+  },
+  darkText: {
+    color: '#fff', // White text for dark mode
   },
   editButton: {
+    marginTop: 8,
     backgroundColor: '#fff',
+    borderRadius: 15,
+    paddingVertical: 6,
     paddingHorizontal: 20,
-    paddingVertical: 5, // Reduced padding for compactness
-    borderRadius: 10,
-    marginTop: 5, // Reduced margin to keep button closer to the text
+    elevation: 3,
   },
   editButtonText: {
     color: '#6DBE45',
+    fontSize: 16,
     fontWeight: 'bold',
   },
-  settingContainer: {
+  searchContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    width: '90%',
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    alignSelf: 'center',
     marginTop: 20,
-    paddingHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  darkSearchContainer: {
+    backgroundColor: '#333', // Dark background for search bar
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+  },
+  darkInput: {
+    color: '#fff', // White text for input in dark mode
+  },
+  contentContainer: {
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+  },
+  sectionContainer: {
+    marginBottom: 20,
   },
   sectionTitle: {
     fontSize: 18,
-    color: '#333',
     fontWeight: 'bold',
-    marginBottom: 12,
+    color: '#333',
+    marginBottom: 10,
   },
-  settingItem: {
+  darkSectionTitle: {
+    color: '#fff', // White text for section titles in dark mode
+  },
+  itemContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#FFF',
+    borderRadius: 15,
     padding: 15,
-    borderRadius: 10,
-    marginBottom: 12,
-    shadowColor: '#ccc',
+    marginBottom: 10,
+    elevation: 3,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
   },
-  settingText: {
+  darkItemContainer: {
+    backgroundColor: '#444', // Dark background for items in dark mode
+  },
+  itemText: {
     fontSize: 16,
-    color: '#333',
+    color: '#555',
     marginLeft: 15,
   },
   logoutButton: {
-    backgroundColor: '#F44336',
-    marginHorizontal: 20,
-    paddingVertical: 12,
+    marginTop: 20,
     alignItems: 'center',
-    borderRadius: 10,
-    marginTop: 30,
+    paddingVertical: 12,
+    borderRadius: 15,
+    elevation: 3,
   },
   logoutText: {
-    color: '#fff',
+    color: '#FFF',
     fontSize: 18,
     fontWeight: 'bold',
   },

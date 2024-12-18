@@ -1,54 +1,73 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native'; // Import navigation hook
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 
-const OrderDetail = () => {
-  const navigation = useNavigation(); // Use the navigation object
+const OrderDetail = ({ route, navigation }) => {
+  const { items } = route.params;
+
+  const calculateSubtotal = () =>
+    items.reduce((sum, item) => sum + parseFloat(item.price.slice(1)) * item.quantity, 0);
+
+  const subtotal = calculateSubtotal();
+  const deliveryFee = 2.0; // Fixed delivery fee
+  const total = subtotal + deliveryFee;
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Order Detail</Text>
-
-      {/* Food Item */}
-      <View style={styles.item}>
-        <Image source={{ uri: 'https://via.placeholder.com/60' }} style={styles.image} />
-        <View style={styles.itemDetails}>
-          <Text style={styles.price}>$52.00</Text>
-          <Text style={styles.itemName}>Fertilizer</Text>
-        </View>
-        <TextInput style={styles.input} keyboardType="numeric" value="2" />
+    <View style={styles.container}>
+      <Text style={styles.headerTitle}>Order Details</Text>
+      <ScrollView contentContainerStyle={styles.itemsContainer}>
+        {items.map((item) => (
+          <View key={item.id} style={styles.itemCard}>
+            <Image source={item.image} style={styles.itemImage} />
+            <View style={styles.itemDetails}>
+              <Text style={styles.itemName}>{item.name}</Text>
+              <Text style={styles.itemPrice}>${item.price}</Text>
+              <Text>Qty: {item.quantity}</Text>
+            </View>
+          </View>
+        ))}
+      </ScrollView>
+      <View style={styles.summaryContainer}>
+        <Text style={styles.summaryText}>Subtotal: ${subtotal.toFixed(2)}</Text>
+        <Text style={styles.summaryText}>Delivery: ${deliveryFee.toFixed(2)}</Text>
+        <Text style={styles.totalText}>Total: ${total.toFixed(2)}</Text>
       </View>
-
-      {/* Summary */}
-      <View style={styles.summary}>
-        <Text style={styles.summaryText}>Subtotal: $96.00</Text>
-        <Text style={styles.summaryText}>Delivery: $2.00</Text>
-        <Text style={styles.total}>Total: $98.00</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('ConfirmOrder')} // Navigate to ConfirmOrder
-        >
-          <Text style={styles.buttonText}>Checkout</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+      <TouchableOpacity
+        style={styles.checkoutButton}
+        onPress={() => navigation.navigate('ConfirmOrder')}>
+        <Text style={styles.checkoutText}>Checkout</Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  item: { flexDirection: 'row', marginBottom: 15, alignItems: 'center' },
-  image: { width: 60, height: 60, borderRadius: 10 },
-  itemDetails: { marginLeft: 10, flex: 1 },
-  price: { color: '#e74c3c', fontWeight: 'bold', fontSize: 16 },
-  itemName: { fontSize: 16, fontWeight: '600' },
-  input: { borderWidth: 1, borderColor: '#ccc', borderRadius: 5, width: 50, textAlign: 'center' },
-  summary: { marginTop: 20, padding: 10, borderRadius: 5, backgroundColor: '#f8f8f8' },
+  container: { flex: 1, backgroundColor: '#f9f9f9', padding: 20 },
+  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 20, color: '#333', textAlign: 'center' },
+  itemsContainer: { paddingVertical: 10 },
+  itemCard: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    marginBottom: 10,
+    padding: 10,
+    shadowColor: '#000',
+    elevation: 3,
+  },
+  itemImage: { width: 60, height: 60, marginRight: 10 },
+  itemDetails: { flex: 1, justifyContent: 'center' },
+  itemName: { fontSize: 16, fontWeight: 'bold', color: '#333' },
+  itemPrice: { color: '#777' },
+  summaryContainer: { marginTop: 10, padding: 10, borderTopWidth: 1, borderColor: '#ddd' },
   summaryText: { fontSize: 16, marginBottom: 5 },
-  total: { fontSize: 18, fontWeight: 'bold' },
-  button: { marginTop: 10, backgroundColor: '#e91e63', padding: 10, borderRadius: 5 },
-  buttonText: { color: '#fff', textAlign: 'center', fontSize: 16, fontWeight: 'bold' },
+  totalText: { fontSize: 18, fontWeight: 'bold' },
+  checkoutButton: {
+    backgroundColor: '#83CE2C',
+    borderRadius: 20,
+    paddingVertical: 15,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  checkoutText: { color: 'white', fontSize: 18, fontWeight: 'bold' },
 });
 
 export default OrderDetail;

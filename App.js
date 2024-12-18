@@ -12,14 +12,15 @@ import Welcome from './final/welcom';
 import Menu from './final/Menu';
 import Marketplace from './final/MarketPlace';
 import Filter from './final/Filter';
-
+import Cart from './final/cart';
 // Importing order flow screens
 import OrderDetail from './final/OrderDetail';
 import ConfirmOrder from './final/ConfirmOrder';
 import Payment from './final/Payment';
-import Shipping from './final/Shipping';
+
 import SetLocation from './final/SetLocation';
 import TrackOrder from './final/TrackOrder';
+
 
 // Importing password recovery flow screens
 import ForgotPassword from './screens/ForgotPassword';
@@ -52,7 +53,15 @@ export default function App() {
         <Stack.Screen name="Menu" component={Menu} />
         <Stack.Screen name="Marketplace" component={Marketplace} />
         <Stack.Screen name="Filter" component={Filter} />
-        
+        <Stack.Screen name="Cart" component={Cart}
+        options={{
+          headerShown: true, // Show header for Profile only
+          title: 'Your Cart', // Custom title for Profile header
+          headerStyle: { backgroundColor: '#fff' }, // Custom header color
+           // Text color in header
+          // Center the header title
+        }}  />
+
         {/* Profile Screen with Header */}
         <Stack.Screen 
           name="Profile" 
@@ -60,8 +69,8 @@ export default function App() {
           options={{
             headerShown: true, // Show header for Profile only
             title: 'My Profile', // Custom title for Profile header
-            headerStyle: { backgroundColor: '#4CAF50' }, // Custom header color
-            headerTintColor: '#fff', // Text color in header
+            headerStyle: { backgroundColor: '#fff' }, // Custom header color
+             // Text color in header
             headerTitleAlign: 'center', // Center the header title
           }} 
         />
@@ -143,15 +152,7 @@ export default function App() {
             headerBackTitleVisible: true, // Show back button text
           }}
         />
-        <Stack.Screen 
-          name="Shipping" 
-          component={Shipping} 
-          options={{
-            title: 'Shipping Information',
-            headerShown: true, // Show header
-            headerBackTitleVisible: true, // Show back button text
-          }}
-        />
+        
         <Stack.Screen 
           name="SetLocation" 
           component={SetLocation} 

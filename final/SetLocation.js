@@ -1,28 +1,64 @@
-import React from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import MapView, { Marker, UrlTile } from 'react-native-maps';
 
-const SetLocation = () => {
+const SetLocation = ({ navigation }) => {
+  const [region, setRegion] = useState({
+    latitude: 37.78825, // Default Latitude
+    longitude: -122.4324, // Default Longitude
+    latitudeDelta: 0.015,
+    longitudeDelta: 0.0121,
+  });
+
+  const [marker, setMarker] = useState({
+    latitude: 37.78825,
+    longitude: -122.4324,
+  });
+
+  const handleMapPress = (e) => {
+    const { latitude, longitude } = e.nativeEvent.coordinate;
+    setRegion({
+      latitude,
+      longitude,
+      latitudeDelta: 0.015,
+      longitudeDelta: 0.0121,
+    });
+    setMarker({
+      latitude,
+      longitude,
+    });
+  };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Find Location</Text>
+      {/* Header */}
+      <Text style={styles.headerTitle}>Find Location</Text>
 
-      {/* Search Input */}
-      <TextInput
-        style={styles.input}
-        placeholder="Find your location"
-        placeholderTextColor="#aaa"
-      />
-
-      {/* Map Placeholder */}
-      <Image
-        source={{ uri: 'https://via.placeholder.com/300x200' }}
+      {/* MapView with OpenStreetMap */}
+      <MapView
         style={styles.map}
-      />
+        region={region}
+        onRegionChangeComplete={(reg) => setRegion(reg)}
+        onPress={handleMapPress}
+        provider={null} // Disable Google Maps provider
+      >
+        {/* Use OpenStreetMap Tiles */}
+        <UrlTile
+          /**
+           * OpenStreetMap tile URL
+           * You can switch to other public tiles as well
+           */
+          urlTemplate="https://a.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          maximumZ={19}
+          flipY={false}
+        />
 
-      {/* Selected Location */}
-      <Text style={styles.info}>Your Location: Manchester, Kentucky 39495</Text>
+        {/* Marker */}
+        <Marker coordinate={marker} />
+      </MapView>
 
-      <TouchableOpacity style={styles.button}>
+      {/* Set Location Button */}
+      <TouchableOpacity style={styles.setButton} onPress={() => navigation.goBack()}>
         <Text style={styles.buttonText}>Set Location</Text>
       </TouchableOpacity>
     </View>
@@ -30,19 +66,35 @@ const SetLocation = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff', flex: 1 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
     padding: 10,
-    marginBottom: 20,
   },
-  map: { width: '100%', height: 200, borderRadius: 10, marginBottom: 20 },
-  info: { fontSize: 16, marginBottom: 10 },
-  button: { backgroundColor: '#e91e63', padding: 10, borderRadius: 5 },
-  buttonText: { color: '#fff', textAlign: 'center', fontSize: 16, fontWeight: 'bold' },
+  headerTitle: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  map: {
+    flex: 1,
+    borderRadius: 10,
+    marginVertical: 10,
+  },
+  setButton: {
+    backgroundColor: '#83CE2C',
+    paddingVertical: 12,
+    borderRadius: 25,
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
 });
 
 export default SetLocation;

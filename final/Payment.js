@@ -1,42 +1,42 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
-const Payment = () => {
+const Payment = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Payment</Text>
+      <Text style={styles.headerTitle}>Payment</Text>
 
-      {/* Payment Options */}
-      <TouchableOpacity style={styles.card}>
-        <Text style={styles.cardText}>PayPal</Text>
-        <Text>2121 6352 8465 ****</Text>
+      <TouchableOpacity style={styles.paymentOption}>
+        <Icon name="paypal" size={30} color="#3b7bbf" />
+        <Text style={styles.paymentText}>PayPal</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.card}>
-        <Text style={styles.cardText}>VISA</Text>
-        <Text>2121 6352 8465 ****</Text>
+      <TouchableOpacity style={styles.paymentOption}>
+        <Icon name="credit-card" size={30} color="#3b7bbf" />
+        <Text style={styles.paymentText}>Visa</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity style={styles.card}>
-        <Text style={styles.cardText}>Payoneer</Text>
-        <Text>2121 6352 8465 ****</Text>
+      <TouchableOpacity style={styles.paymentOption}>
+        <Icon name="bank" size={30} color="#3b7bbf" />
+        <Text style={styles.paymentText}>Payoneer</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 20 },
-  card: {
+  container: { flex: 1, padding: 20, backgroundColor: '#f9f9f9' },
+  headerTitle: { fontSize: 28, fontWeight: 'bold', marginBottom: 20, color: '#333', textAlign: 'center' },
+  paymentOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
     padding: 15,
     marginBottom: 15,
-    borderRadius: 5,
-    backgroundColor: '#f5e6d7',
-    borderWidth: 1,
-    borderColor: '#ccc',
+    borderRadius: 10,
+    shadowColor: '#000',
+    elevation: 3,
   },
-  cardText: { fontSize: 18, fontWeight: 'bold', marginBottom: 5 },
+  paymentText: { marginLeft: 10, fontSize: 18, color: '#333' },
 });
 
 export default Payment;

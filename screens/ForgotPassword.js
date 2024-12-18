@@ -34,7 +34,7 @@ const ForgotPassword = () => {
       return;
     }
     // Navigate to Password Reset Screen after successful validation
-    navigation.navigate('PasswordReset');
+    navigation.navigate('VerifyCode');
   };
 
   return (
@@ -43,11 +43,11 @@ const ForgotPassword = () => {
         {/* Lottie Animation at the Top */}
         <View style={styles.animationContainer}>
           <LottieView
-            source={require('../final/assets/ts.json')} // Path to your Lottie animation file
+            source={require('../final/assets/thinking.json')} // Path to your Lottie animation file
             autoPlay
             loop
             style={styles.animatedIcon}
-            speed={9} // Speed up the animation
+            speed={2} // Speed up the animation
           />
         </View>
 

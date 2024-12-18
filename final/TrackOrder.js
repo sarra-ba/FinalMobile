@@ -1,41 +1,131 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons'; // For icons
+import LinearGradient from 'react-native-linear-gradient'; // For gradient styling
 
-const TrackOrder = () => {
+const TrackOrder = ({ navigation }) => {
   return (
     <View style={styles.container}>
+      {/* Header */}
       <Text style={styles.title}>Track Order</Text>
       <Text style={styles.orderId}>Order ID: 4544882266</Text>
 
-      {/* Timeline */}
-      <View style={styles.timeline}>
-        <Text>04:30 PM - Confirmed</Text>
-        <Text>04:38 PM - Processing</Text>
-        <Text>04:42 PM - On the way</Text>
-        <Text>04:46 PM - Delivered</Text>
+      {/* Timeline Section */}
+      <View style={styles.timelineSection}>
+        <View style={styles.timeline}>
+          <View style={styles.timelineItem}>
+            <View style={styles.dot} />
+            <Text style={styles.timelineText}>04:30 PM - Confirmed</Text>
+          </View>
+          <View style={styles.timelineItem}>
+            <View style={styles.dot} />
+            <Text style={styles.timelineText}>04:38 PM - Processing</Text>
+          </View>
+          <View style={styles.timelineItem}>
+            <View style={styles.dot} />
+            <Text style={styles.timelineText}>04:42 PM - On the way</Text>
+          </View>
+          <View style={styles.timelineItem}>
+            <View style={styles.dot} />
+            <Text style={styles.timelineText}>04:46 PM - Delivered</Text>
+          </View>
+        </View>
       </View>
 
-      {/* Rider Information */}
-      <View style={styles.riderCard}>
-        <Text style={styles.riderName}>mr rider</Text>
-        <Text>25 minutes on the way</Text>
-        <TouchableOpacity style={styles.callButton}>
-          <Text style={styles.callText}>Call</Text>
-        </TouchableOpacity>
+      {/* Rider Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.riderName}>Mr. Rider</Text>
+        <Text style={styles.riderStatus}>25 minutes on the way</Text>
+        
+        {/* Call Button with Gradient Background */}
+        <LinearGradient
+          colors={['#82CE2B', '#6DBE45']} // Gradient colors for Call button
+          style={styles.callButton}>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('CallRider')}>
+            <Text style={styles.callText}>Call</Text>
+          </TouchableOpacity>
+        </LinearGradient>
       </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff', flex: 1 },
-  title: { fontSize: 24, fontWeight: 'bold', marginBottom: 10 },
-  orderId: { fontSize: 16, marginBottom: 20 },
-  timeline: { marginBottom: 20 },
-  riderCard: { padding: 15, borderRadius: 5, backgroundColor: '#f8f8f8' },
-  riderName: { fontWeight: 'bold', fontSize: 18, marginBottom: 5 },
-  callButton: { marginTop: 10, backgroundColor: '#e91e63', padding: 10, borderRadius: 5 },
-  callText: { color: '#fff', textAlign: 'center', fontSize: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: '#f9f9f9',
+    padding: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  orderId: {
+    fontSize: 16,
+    color: '#777',
+    marginBottom: 20,
+  },
+  timelineSection: {
+    marginBottom: 30,
+    alignItems: 'center',
+  },
+  timeline: {
+    position: 'relative',
+    borderLeftWidth: 3,
+    borderColor: '#6DBE45', // Green line for the timeline
+    paddingLeft: 20,
+  },
+  timelineItem: {
+    marginBottom: 20,
+    position: 'relative',
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dot: {
+    width: 12,
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#6DBE45', // Green dot for timeline
+    marginRight: 10, // Space between dot and text
+  },
+  timelineText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  section: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    elevation: 3,
+  },
+  riderName: {
+    fontWeight: 'bold',
+    fontSize: 18,
+    color: '#333',
+    marginBottom: 5,
+  },
+  riderStatus: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 15,
+  },
+  callButton: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 5,
+    elevation: 3,
+  },
+  callText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
 });
 
 export default TrackOrder;

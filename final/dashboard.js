@@ -31,7 +31,7 @@ const DashboardScreen = () => {
             <Text style={styles.orderText}>Fertilizer Delivery: In Transit</Text>
             <Text style={styles.orderStatus}>Estimated Arrival: 2 Days</Text>
           </View>
-          <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+          <TouchableOpacity onPress={() => navigation.navigate('TrackOrder')}>
             <Text style={styles.viewMore}>View More</Text>
           </TouchableOpacity>
         </View>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   },
   headerContainer: {
     alignItems: 'center',
-    marginTop: 40, // Adjusted to bring the header up
+    marginTop: 69, // Adjusted to bring the header up
   },
   headerText: {
     fontSize: 36,

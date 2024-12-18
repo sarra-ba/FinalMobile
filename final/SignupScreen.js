@@ -12,7 +12,6 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-
 import CheckBox from 'react-native-checkbox';
 
 const SignupScreen = () => {
@@ -50,8 +49,8 @@ const SignupScreen = () => {
       Alert.alert('Validation Error', 'Please select your type (Farmer or Restaurant/Hotel).');
       return;
     }
-    // Navigate to Dashboard after successful validation
-    navigation.navigate('Dashboard');
+    // Navigate to Login after successful validation
+    navigation.navigate('Login');
   };
 
   // Function to handle checkbox selection to ensure only one is selected at a time
@@ -117,7 +116,7 @@ const SignupScreen = () => {
             secureTextEntry
           />
 
-          {/* Farmer / Restaurant / Hotel Selection */}
+          {/* Farmer / Restaurant / Hotel Selection on Same Line */}
           <View style={styles.checkboxContainer}>
             <View style={styles.checkboxRow}>
               <CheckBox
@@ -125,15 +124,13 @@ const SignupScreen = () => {
                 onValueChange={handleFarmerChange}
                 style={styles.checkbox}
               />
-              <Text style={styles.checkboxLabel}>Farmer</Text>
-            </View>
-            <View style={styles.checkboxRow}>
+              <Text style={styles.checkbox}>Farmer</Text>
               <CheckBox
                 value={isRestaurant}
                 onValueChange={handleRestaurantChange}
                 style={styles.checkbox}
               />
-              <Text style={styles.checkboxLabel}>Restaurant/Hotel</Text>
+              <Text style={styles.checkbox}>Restaurant/Hotel</Text>
             </View>
           </View>
 
@@ -152,7 +149,6 @@ const SignupScreen = () => {
             <Text style={styles.link}>Already have an account? Log In</Text>
           </TouchableOpacity>
         </View>
-
       </View>
     </TouchableWithoutFeedback>
   );
@@ -228,12 +224,12 @@ const styles = StyleSheet.create({
   checkboxRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 10,
+    justifyContent: 'space-between',  // Ensures both checkboxes are spaced evenly
   },
   checkbox: {
     marginRight: 10,
   },
-  checkboxLabel: {
+  checkbox: {
     fontSize: 16,
     color: '#426816',
   },

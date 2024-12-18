@@ -1,52 +1,99 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+  ImageBackground,
+} from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';  // For the "+" icon
+import { launchImageLibrary } from 'react-native-image-picker';  // Image picker library
 
 const EditProfileScreen = () => {
   const [username, setUsername] = useState('JohnDoe');
   const [email, setEmail] = useState('johndoe@gmail.com');
   const [phoneNumber, setPhoneNumber] = useState('123-456-7890');
   const [password, setPassword] = useState('********');
+  const [profileImage, setProfileImage] = useState(require('./assets/user1.png'));  // Default profile picture
+
+  // Function to handle image picking
+  const handleImagePick = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: false,
+      },
+      (response) => {
+        if (response.didCancel) {
+          console.log('User canceled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+        } else {
+          // Update profile picture with selected image
+          setProfileImage({ uri: response.assets[0].uri });
+        }
+      }
+    );
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Edit Profile</Text>
+      {/* Header with background image */}
+      <ImageBackground
+        source={require('./assets/background1.png')}  // Background image
+        style={styles.headerBackground}>
+        
+        {/* Search Bar */}
+        
+      </ImageBackground>
+
+      {/* Profile Image */}
+      <View style={styles.imageContainer}>
+        <Image source={profileImage} style={styles.profileImage} />
+        {/* "+" Icon for changing profile picture */}
+        <TouchableOpacity style={styles.changeImageButton} onPress={handleImagePick}>
+          <Icon name="add-circle" size={40} color="#fff" />
+        </TouchableOpacity>
       </View>
 
-      <Image
-        source={require('./assets/user1.png')}
-        style={styles.profileImage}
-      />
-
       {/* Input Fields */}
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone Number"
-        value={phoneNumber}
-        onChangeText={setPhoneNumber}
-        keyboardType="phone-pad"
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
+      <View style={styles.formContainer}>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          placeholderTextColor="#777"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          placeholderTextColor="#777"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Phone Number"
+          placeholderTextColor="#777"
+          value={phoneNumber}
+          onChangeText={setPhoneNumber}
+          keyboardType="phone-pad"
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          placeholderTextColor="#777"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+      </View>
 
+      {/* Update Button */}
       <TouchableOpacity style={styles.updateButton}>
         <Text style={styles.updateButtonText}>Update</Text>
       </TouchableOpacity>
@@ -57,49 +104,96 @@ const EditProfileScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F6F6F6',
+    backgroundColor: '#F9FAFC',
     alignItems: 'center',
-    paddingTop: 20,
   },
-  header: {
+  headerBackground: {
     width: '100%',
+    height: 200,
+    justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#6DBE45',
-    paddingVertical: 20,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    paddingTop: 30,
   },
-  title: {
-    color: '#fff',
-    fontSize: 18,
+  headerTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 10,
+  },
+  searchContainer: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    borderRadius: 25,
+    width: '90%',
+    paddingHorizontal: 10,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  searchIcon: {
+    marginRight: 10,
+  },
+  searchInput: {
+    flex: 1,
+    height: 40,
+  },
+  imageContainer: {
+    backgroundColor: '#E0F2F1',
+    borderRadius: 100,
+    padding: 8,
+    marginTop: -100,
+    elevation: 10,
+    position: 'relative',
   },
   profileImage: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    marginVertical: 20,
+  },
+  changeImageButton: {
+    position: 'absolute',
+    bottom: 0,
+    right: 0,
+    backgroundColor: '#8BC34A',
+    borderRadius: 30,
+    padding: 10,
+    elevation: 5,
+  },
+  formContainer: {
+    marginTop: 20,
+    width: '90%',
   },
   input: {
-    width: '80%',
     backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 10,
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
     marginBottom: 15,
-    elevation: 2,
+    fontSize: 16,
+    color: '#333',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5,
   },
   updateButton: {
     backgroundColor: '#6DBE45',
-    paddingVertical: 10,
-    width: '80%',
+    borderRadius: 25,
+    paddingVertical: 12,
+    paddingHorizontal: 30,
+    width: '90%',
     alignItems: 'center',
-    borderRadius: 10,
     marginTop: 10,
+    elevation: 5,
   },
   updateButtonText: {
-    color: '#fff',
+    fontSize: 18,
     fontWeight: 'bold',
-    fontSize: 16,
+    color: '#fff',
   },
 });
 

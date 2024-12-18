@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Image, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView,ImageBackground, Image, TouchableOpacity } from 'react-native';
 import NavBar from './NavBar';  // Import the NavBar component
-
+import Icon from 'react-native-vector-icons/dist/FontAwesome';
 const Notifications = () => {
   // Example notifications array
   const notifications = [
@@ -13,9 +13,13 @@ const Notifications = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerContainer}>
-        <Text style={styles.headerText}>Notifications</Text>
-      </View>
+      {/* Header Background */}
+      <ImageBackground
+              source={require('./assets/background1.png')}
+              style={styles.headerBackground}>
+              <Text style={styles.headerTitle}>Notification</Text>
+              
+       </ImageBackground>
 
       {/* Scrollable Notifications */}
       <ScrollView style={styles.notificationsList}>
@@ -47,18 +51,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
-  headerContainer: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 20,
+  headerBackground: {
+    height: 200,
+    justifyContent: 'center',
     alignItems: 'center',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
-    elevation: 5,
+    paddingTop: 30,
+    backgroundColor: '#8BC34A', // Match header background with MarketPlace screen
   },
-  headerText: {
-    fontSize: 24,
+  headerTitle: {
+    fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: 'white',
+    marginBottom: 10,
   },
   notificationsList: {
     marginVertical: 10,
@@ -66,16 +70,16 @@ const styles = StyleSheet.create({
   },
   notificationCard: {
     backgroundColor: '#ffffff',
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 15,
-    marginVertical: 8,
+    marginVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    elevation: 3,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 3,
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
   notificationContent: {
     flexDirection: 'row',
