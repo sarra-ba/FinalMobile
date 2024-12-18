@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons'; // For icons
-import LinearGradient from 'react-native-linear-gradient'; // For gradient styling
+import LinearGradient from 'react-native-linear-gradient';
+import NavBar from './NavBar';
 
 const TrackOrder = ({ navigation }) => {
   return (
@@ -36,17 +36,20 @@ const TrackOrder = ({ navigation }) => {
       <View style={styles.section}>
         <Text style={styles.riderName}>Mr. Rider</Text>
         <Text style={styles.riderStatus}>25 minutes on the way</Text>
-        
+
         {/* Call Button with Gradient Background */}
         <LinearGradient
-          colors={['#82CE2B', '#6DBE45']} // Gradient colors for Call button
-          style={styles.callButton}>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('CallRider')}>
+          colors={['#82CE2B', '#6DBE45']}
+          style={styles.callButton}
+        >
+          <TouchableOpacity onPress={() => navigation.navigate('CallRider')}>
             <Text style={styles.callText}>Call</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
+
+      {/* Bottom Navigation Bar */}
+     
     </View>
   );
 };
@@ -56,6 +59,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
     padding: 20,
+    paddingBottom: 80,
+    // Ensuring enough space for the NavBar
   },
   title: {
     fontSize: 26,
@@ -76,7 +81,7 @@ const styles = StyleSheet.create({
   timeline: {
     position: 'relative',
     borderLeftWidth: 3,
-    borderColor: '#6DBE45', // Green line for the timeline
+    borderColor: '#6DBE45',
     paddingLeft: 20,
   },
   timelineItem: {
@@ -89,8 +94,8 @@ const styles = StyleSheet.create({
     width: 12,
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#6DBE45', // Green dot for timeline
-    marginRight: 10, // Space between dot and text
+    backgroundColor: '#6DBE45',
+    marginRight: 10,
   },
   timelineText: {
     fontSize: 16,

@@ -16,23 +16,34 @@ import NavBar from './NavBar';
 
 const MarketPlace = ({ navigation }) => {
   const [search, setSearch] = useState('');
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png'), date: '2023-01-01' },
-    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png'), date: '2023-05-10' },
-    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png'), date: '2023-07-15' },
-    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png'), date: '2023-02-20' },
-  ]);
   const [sortModalVisible, setSortModalVisible] = useState(false);
+  const [filterModalVisible, setFilterModalVisible] = useState(false);
+  const [filter, setFilter] = useState({
+    category: '',
+    priceRange: '',
+    rating: '',
+  });
+
+  const [products, setProducts] = useState([
+    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png'), date: '2023-01-01', category: 'organic', rating: 4 },
+    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png'), date: '2023-05-10', category: 'chemical', rating: 5 },
+    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png'), date: '2023-07-15', category: 'organic', rating: 3 },
+    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png'), date: '2023-02-20', category: 'organic', rating: 4 },
+  ]);
 
   // Handle Add to Cart
   const handleAddToCart = (product) => {
     navigation.navigate('Cart', { product });
   };
 
-  // Filter products based on search input
-  const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(search.toLowerCase())
-  );
+  // Filter products based on search input and filters
+  const filteredProducts = products.filter((product) => {
+    const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
+    const matchesCategory = filter.category ? product.category === filter.category : true;
+    const matchesPrice = filter.priceRange ? parseInt(product.price.slice(1)) >= parseInt(filter.priceRange[0]) && parseInt(product.price.slice(1)) <= parseInt(filter.priceRange[1]) : true;
+    const matchesRating = filter.rating ? product.rating >= filter.rating : true;
+    return matchesSearch && matchesCategory && matchesPrice && matchesRating;
+  });
 
   // Handle Sort options
   const handleSortPress = () => {
@@ -47,6 +58,10 @@ const MarketPlace = ({ navigation }) => {
       sortedProducts.sort((a, b) => new Date(b.date) - new Date(a.date));
     } else if (sortOption === 'oldest') {
       sortedProducts.sort((a, b) => new Date(a.date) - new Date(b.date));
+    } else if (sortOption === 'price-asc') {
+      sortedProducts.sort((a, b) => parseInt(a.price.slice(1)) - parseInt(b.price.slice(1)));
+    } else if (sortOption === 'price-desc') {
+      sortedProducts.sort((a, b) => parseInt(b.price.slice(1)) - parseInt(a.price.slice(1)));
     }
     setProducts(sortedProducts);
     setSortModalVisible(false);
@@ -71,7 +86,7 @@ const MarketPlace = ({ navigation }) => {
 
       {/* Filter & Sort Buttons */}
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Filter')}>
+        <TouchableOpacity style={styles.button} onPress={() => setFilterModalVisible(true)}>
           <Icon name="filter" size={18} color="white" />
           <Text style={styles.buttonText}>Filter</Text>
         </TouchableOpacity>
@@ -96,6 +111,8 @@ const MarketPlace = ({ navigation }) => {
                 { key: 'Alphabetically', value: 'alphabet' },
                 { key: 'Newest', value: 'newest' },
                 { key: 'Oldest', value: 'oldest' },
+                { key: 'Price: Low to High', value: 'price-asc' },
+                { key: 'Price: High to Low', value: 'price-desc' },
               ]}
               renderItem={({ item }) => (
                 <TouchableOpacity style={styles.sortOption} onPress={() => handleSort(item.value)}>
@@ -107,6 +124,70 @@ const MarketPlace = ({ navigation }) => {
             <TouchableOpacity
               style={styles.closeModalButton}
               onPress={() => setSortModalVisible(false)}
+            >
+              <Text style={styles.closeModalButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Filter Modal */}
+       {/* Filter Modal */}
+       <Modal
+        transparent={true}
+        visible={filterModalVisible}
+        animationType="slide"
+        onRequestClose={() => setFilterModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Filter By</Text>
+            {/* Category Filter */}
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, category: 'organic' })}
+            >
+              <Text style={styles.filterOptionText}>Category: Organic</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, category: 'chemical' })}
+            >
+              <Text style={styles.filterOptionText}>Category: Chemical</Text>
+            </TouchableOpacity>
+
+            {/* Price Range Filter */}
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, priceRange: [20, 25] })}
+            >
+              <Text style={styles.filterOptionText}>Price: $20 - $25</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, priceRange: [25, 30] })}
+            >
+              <Text style={styles.filterOptionText}>Price: $25 - $30</Text>
+            </TouchableOpacity>
+
+            {/* Rating Filter */}
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, rating: 4 })}
+            >
+              <Text style={styles.filterOptionText}>Rating: 4 & above</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.filterOption}
+              onPress={() => setFilter({ ...filter, rating: 5 })}
+            >
+              <Text style={styles.filterOptionText}>Rating: 5</Text>
+            </TouchableOpacity>
+
+            {/* Close Modal Button */}
+            <TouchableOpacity
+              style={styles.closeModalButton}
+              onPress={() => setFilterModalVisible(false)}
             >
               <Text style={styles.closeModalButtonText}>Close</Text>
             </TouchableOpacity>
@@ -278,6 +359,15 @@ const styles = StyleSheet.create({
     borderBottomColor: '#ddd',
   },
   sortOptionText: {
+    fontSize: 16,
+  },
+  filterOption: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+  },
+  filterOptionText: {
     fontSize: 16,
   },
   closeModalButton: {
