@@ -12,7 +12,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import CheckBox from 'react-native-checkbox';
+import BouncyCheckbox from 'react-native-bouncy-checkbox';
 
 const SignupScreen = () => {
   const [email, setEmail] = useState('');
@@ -46,26 +46,14 @@ const SignupScreen = () => {
       return;
     }
     if (!isFarmer && !isRestaurant) {
-      Alert.alert('Validation Error', 'Please select your type (Farmer or Restaurant/Hotel).');
+      Alert.alert(
+        'Validation Error',
+        'Please select your type (Farmer or Restaurant/Hotel).'
+      );
       return;
     }
     // Navigate to Login after successful validation
     navigation.navigate('Login');
-  };
-
-  // Function to handle checkbox selection to ensure only one is selected at a time
-  const handleFarmerChange = (value) => {
-    setIsFarmer(value);
-    if (value) {
-      setIsRestaurant(false); // Deselect Restaurant/Hotel if Farmer is selected
-    }
-  };
-
-  const handleRestaurantChange = (value) => {
-    setIsRestaurant(value);
-    if (value) {
-      setIsFarmer(false); // Deselect Farmer if Restaurant/Hotel is selected
-    }
   };
 
   return (
@@ -116,28 +104,41 @@ const SignupScreen = () => {
             secureTextEntry
           />
 
-          {/* Farmer / Restaurant / Hotel Selection on Same Line */}
-          <View style={styles.checkboxContainer}>
-            <View style={styles.checkboxRow}>
-              <CheckBox
-                value={isFarmer}
-                onValueChange={handleFarmerChange}
-                style={styles.checkbox}
-              />
-              <Text style={styles.checkbox}>Farmer</Text>
-              <CheckBox
-                value={isRestaurant}
-                onValueChange={handleRestaurantChange}
-                style={styles.checkbox}
-              />
-              <Text style={styles.checkbox}>Restaurant/Hotel</Text>
-            </View>
+          {/* Farmer / Restaurant / Hotel Selection */}
+          <View style={styles.checkboxRow}>
+            <BouncyCheckbox
+              size={22}
+              fillColor="#72C21B"
+              unfillColor="#FFFFFF"
+              text="Farmer"
+              textStyle={styles.checkboxText}
+              iconStyle={{ borderColor: '#72C21B' }}
+              onPress={(isChecked) => {
+                setIsFarmer(isChecked);
+                if (isChecked) setIsRestaurant(false); // Unselect other option
+              }}
+              isChecked={isFarmer}
+            />
+
+            <BouncyCheckbox
+              size={22}
+              fillColor="#72C21B"
+              unfillColor="#FFFFFF"
+              text="Restaurant/Hotel"
+              textStyle={styles.checkboxText}
+              iconStyle={{ borderColor: '#72C21B' }}
+              onPress={(isChecked) => {
+                setIsRestaurant(isChecked);
+                if (isChecked) setIsFarmer(false); // Unselect other option
+              }}
+              isChecked={isRestaurant}
+            />
           </View>
 
           {/* Sign Up Button */}
           <TouchableOpacity style={styles.signupButton} onPress={validateAndSignup}>
             <LinearGradient
-              colors={['#72C21B', '#81CE2C', '#426816']} // Gradient for button
+              colors={['#72C21B', '#81CE2C', '#426816']}
               style={styles.signupButtonGradient}
             >
               <Text style={styles.signupButtonText}>Sign Up</Text>
@@ -217,21 +218,14 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
     textAlign: 'center',
   },
-  checkboxContainer: {
-    marginTop: 20,
+  checkboxRow: {
+    marginTop: 10,
     marginBottom: 30,
   },
-  checkboxRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',  // Ensures both checkboxes are spaced evenly
-  },
-  checkbox: {
-    marginRight: 10,
-  },
-  checkbox: {
-    fontSize: 16,
+  checkboxText: {
+    textDecorationLine: 'none',
     color: '#426816',
+    fontSize: 16,
   },
 });
 
