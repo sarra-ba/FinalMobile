@@ -31,7 +31,9 @@ const ConfirmOrder = ({ navigation }) => {
       </View>
 
       {/* Order Summary */}
-      <View style={styles.summary}>
+      <View style={styles.summary}> 
+
+        
         <View style={styles.row}>
           <Text style={styles.summaryText}>Subtotal:</Text>
           <Text style={styles.summaryValue}>$96.00</Text>

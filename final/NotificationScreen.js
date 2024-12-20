@@ -1,44 +1,66 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView,ImageBackground, Image, TouchableOpacity } from 'react-native';
-import NavBar from './NavBar';  // Import the NavBar component
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, ImageBackground, Image, TouchableOpacity } from 'react-native';
+import NavBar from './NavBar'; // Import the NavBar component
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
+
 const Notifications = () => {
-  // Example notifications array
-  const notifications = [
-    { id: 1, title: 'Delivery Update', message: 'Your fertilizer is out for delivery.', time: '2h ago' },
-    { id: 2, title: 'Order Shipped', message: 'Your order #1234 has been shipped.', time: '1 day ago' },
-    { id: 3, title: 'New Fertilizer', message: 'Check out our new organic fertilizers!', time: '2 days ago' },
-    { id: 4, title: 'System Alert', message: 'Your account details were updated.', time: '3 days ago' },
-  ];
+  const [notifications, setNotifications] = useState([]); // State to store notifications
+  const [loading, setLoading] = useState(true); // State to handle loading state
+  const [error, setError] = useState(null); // State to handle errors
+
+  // Fetch notifications from the database
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/notifications'); // Replace with your backend URL
+        if (!response.ok) {
+          throw new Error('Failed to fetch notifications');
+        }
+        const data = await response.json();
+        setNotifications(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, []);
 
   return (
     <View style={styles.container}>
       {/* Header Background */}
       <ImageBackground
-              source={require('./assets/background1.png')}
-              style={styles.headerBackground}>
-              <Text style={styles.headerTitle}>Notification</Text>
-              
-       </ImageBackground>
+        source={require('./assets/background1.png')}
+        style={styles.headerBackground}>
+        <Text style={styles.headerTitle}>Notification</Text>
+      </ImageBackground>
 
-      {/* Scrollable Notifications */}
-      <ScrollView style={styles.notificationsList}>
-        {notifications.map((notification) => (
-          <TouchableOpacity key={notification.id} style={styles.notificationCard}>
-            <View style={styles.notificationContent}>
-              <Image
-                source={require('./assets/bell.png')} // Replace with an appropriate icon
-                style={styles.icon}
-              />
-              <View style={styles.textContainer}>
-                <Text style={styles.notificationTitle}>{notification.title}</Text>
-                <Text style={styles.notificationMessage}>{notification.message}</Text>
-                <Text style={styles.notificationTime}>{notification.time}</Text>
+      {/* Notifications Content */}
+      {loading ? (
+        <Text style={styles.loadingText}>Loading...</Text>
+      ) : error ? (
+        <Text style={styles.errorText}>{error}</Text>
+      ) : (
+        <ScrollView style={styles.notificationsList}>
+          {notifications.map((notification) => (
+            <TouchableOpacity key={notification.id} style={styles.notificationCard}>
+              <View style={styles.notificationContent}>
+                <Image
+                  source={require('./assets/bell.png')} // Replace with an appropriate icon
+                  style={styles.icon}
+                />
+                <View style={styles.textContainer}>
+                  <Text style={styles.notificationTitle}>{notification.title}</Text>
+                  <Text style={styles.notificationMessage}>{notification.message}</Text>
+                  <Text style={styles.notificationTime}>{notification.time}</Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
 
       {/* NavBar */}
       <NavBar />
@@ -107,6 +129,18 @@ const styles = StyleSheet.create({
   notificationTime: {
     fontSize: 12,
     color: '#999',
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorText: {
+    textAlign: 'center',
+    marginTop: 20,
+    fontSize: 16,
+    color: 'red',
   },
 });
 

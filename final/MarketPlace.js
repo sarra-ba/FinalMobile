@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,9 +10,11 @@ import {
   ImageBackground,
   Modal,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import NavBar from './NavBar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MarketPlace = ({ navigation }) => {
   const [search, setSearch] = useState('');
@@ -23,24 +25,69 @@ const MarketPlace = ({ navigation }) => {
     priceRange: '',
     rating: '',
   });
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const [products, setProducts] = useState([
-    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png'), date: '2023-01-01', category: 'organic', rating: 4 },
-    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png'), date: '2023-05-10', category: 'chemical', rating: 5 },
-    { id: 3, name: 'Potassium Mix', price: '$28', image: require('./assets/fertilizer.png'), date: '2023-07-15', category: 'organic', rating: 3 },
-    { id: 4, name: 'Compost Blend', price: '$20', image: require('./assets/fertilizer.png'), date: '2023-02-20', category: 'organic', rating: 4 },
-  ]);
+  // Fetch products from the backend
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('http://localhost:8080/products'); 
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Handle Add to Cart
-  const handleAddToCart = (product) => {
-    navigation.navigate('Cart', { product });
+  const handleAddToCart = async (product) => {
+    try {
+      const userId = await AsyncStorage.getItem('userId'); // Retrieve userId from AsyncStorage
+      if (userId) {
+        // Send the userId and product details to the backend
+        const response = await fetch('http://localhost:8080/api/orders/add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userId,
+            productId: product.id,
+          }),
+        });
+
+        if (response.ok) {
+          console.log('Product added to order successfully');
+          // Optionally navigate to the Cart page or show a success message
+          navigation.navigate('Cart', { product });
+        } else {
+          console.error('Failed to add product to order');
+        }
+      } else {
+        console.error('User not logged in');
+      }
+    } catch (error) {
+      console.error('Error adding product to order:', error);
+    }
   };
 
   // Filter products based on search input and filters
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.name.toLowerCase().includes(search.toLowerCase());
     const matchesCategory = filter.category ? product.category === filter.category : true;
-    const matchesPrice = filter.priceRange ? parseInt(product.price.slice(1)) >= parseInt(filter.priceRange[0]) && parseInt(product.price.slice(1)) <= parseInt(filter.priceRange[1]) : true;
+    const matchesPrice = filter.priceRange
+      ? parseInt(product.price) >= parseInt(filter.priceRange[0]) &&
+        parseInt(product.price) <= parseInt(filter.priceRange[1])
+      : true;
     const matchesRating = filter.rating ? product.rating >= filter.rating : true;
     return matchesSearch && matchesCategory && matchesPrice && matchesRating;
   });
@@ -59,13 +106,22 @@ const MarketPlace = ({ navigation }) => {
     } else if (sortOption === 'oldest') {
       sortedProducts.sort((a, b) => new Date(a.date) - new Date(b.date));
     } else if (sortOption === 'price-asc') {
-      sortedProducts.sort((a, b) => parseInt(a.price.slice(1)) - parseInt(b.price.slice(1)));
+      sortedProducts.sort((a, b) => parseInt(a.price) - parseInt(b.price));
     } else if (sortOption === 'price-desc') {
-      sortedProducts.sort((a, b) => parseInt(b.price.slice(1)) - parseInt(a.price.slice(1)));
+      sortedProducts.sort((a, b) => parseInt(b.price) - parseInt(a.price));
     }
     setProducts(sortedProducts);
     setSortModalVisible(false);
   };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#0000ff" />
+        <Text>Loading products...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -77,7 +133,7 @@ const MarketPlace = ({ navigation }) => {
           <Icon name="search" size={20} color="grey" style={styles.searchIcon} />
           <TextInput
             style={styles.searchInput}
-            placeholder="Search for fertilizers..."
+            placeholder="Search for products..."
             value={search}
             onChangeText={setSearch}
           />
@@ -96,112 +152,13 @@ const MarketPlace = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Sort Modal */}
-      <Modal
-        transparent={true}
-        visible={sortModalVisible}
-        animationType="slide"
-        onRequestClose={() => setSortModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Sort By</Text>
-            <FlatList
-              data={[
-                { key: 'Alphabetically', value: 'alphabet' },
-                { key: 'Newest', value: 'newest' },
-                { key: 'Oldest', value: 'oldest' },
-                { key: 'Price: Low to High', value: 'price-asc' },
-                { key: 'Price: High to Low', value: 'price-desc' },
-              ]}
-              renderItem={({ item }) => (
-                <TouchableOpacity style={styles.sortOption} onPress={() => handleSort(item.value)}>
-                  <Text style={styles.sortOptionText}>{item.key}</Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item.value}
-            />
-            <TouchableOpacity
-              style={styles.closeModalButton}
-              onPress={() => setSortModalVisible(false)}
-            >
-              <Text style={styles.closeModalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
-      {/* Filter Modal */}
-       {/* Filter Modal */}
-       <Modal
-        transparent={true}
-        visible={filterModalVisible}
-        animationType="slide"
-        onRequestClose={() => setFilterModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Filter By</Text>
-            {/* Category Filter */}
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, category: 'organic' })}
-            >
-              <Text style={styles.filterOptionText}>Category: Organic</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, category: 'chemical' })}
-            >
-              <Text style={styles.filterOptionText}>Category: Chemical</Text>
-            </TouchableOpacity>
-
-            {/* Price Range Filter */}
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, priceRange: [20, 25] })}
-            >
-              <Text style={styles.filterOptionText}>Price: $20 - $25</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, priceRange: [25, 30] })}
-            >
-              <Text style={styles.filterOptionText}>Price: $25 - $30</Text>
-            </TouchableOpacity>
-
-            {/* Rating Filter */}
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, rating: 4 })}
-            >
-              <Text style={styles.filterOptionText}>Rating: 4 & above</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.filterOption}
-              onPress={() => setFilter({ ...filter, rating: 5 })}
-            >
-              <Text style={styles.filterOptionText}>Rating: 5</Text>
-            </TouchableOpacity>
-
-            {/* Close Modal Button */}
-            <TouchableOpacity
-              style={styles.closeModalButton}
-              onPress={() => setFilterModalVisible(false)}
-            >
-              <Text style={styles.closeModalButtonText}>Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
-
       {/* Product List */}
       <ScrollView contentContainerStyle={styles.productList}>
         {filteredProducts.map((item) => (
           <View key={item.id} style={styles.card}>
-            <Image source={item.image} style={styles.productImage} />
+            <Image source={{ uri: item.image }} style={styles.productImage} />
             <Text style={styles.productName}>{item.name}</Text>
-            <Text style={styles.productPrice}>{item.price}</Text>
+            <Text style={styles.productPrice}>${item.price}</Text>
             <TouchableOpacity
               style={styles.buyButton}
               onPress={() => handleAddToCart(item)}
@@ -223,7 +180,6 @@ const MarketPlace = ({ navigation }) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

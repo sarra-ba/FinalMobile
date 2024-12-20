@@ -12,6 +12,7 @@ import {
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -24,7 +25,7 @@ const LoginScreen = () => {
   };
 
   // Function to validate inputs and proceed with login
-  const validateAndLogin = () => {
+  const handleLogin = async () => {
     if (!email) {
       Alert.alert('Validation Error', 'Email is required.');
       return;
@@ -37,8 +38,41 @@ const LoginScreen = () => {
       Alert.alert('Validation Error', 'Invalid email format.');
       return;
     }
-    // Navigate to Dashboard after successful validation
-    navigation.navigate('Dashboard');
+
+    try {
+      const response = await fetch('http://localhost:8080/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Assuming the backend returns a user object with userId, userType, and profilePicture
+        const { userId, userType, profilePicture } = data;
+
+        // Store userId, userType, and profilePicture in AsyncStorage
+        await AsyncStorage.setItem('userId', userId.toString());
+        await AsyncStorage.setItem('userType', userType);
+        await AsyncStorage.setItem('profilePicture', profilePicture);
+
+        // Handle successful login
+        Alert.alert('Login successful', 'Welcome back!');
+        navigation.navigate('Choose'); // Navigate after successful login
+      } else {
+        // Handle errors from the backend (e.g., invalid credentials)
+        Alert.alert('Login failed', data.message || 'Something went wrong');
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      Alert.alert('Login failed', 'An error occurred. Please try again later.');
+    }
   };
 
   return (
@@ -81,7 +115,7 @@ const LoginScreen = () => {
           />
 
           {/* Login Button */}
-          <TouchableOpacity style={styles.loginButton} onPress={validateAndLogin}>
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
             <LinearGradient
               colors={['#72C21B', '#81CE2C', '#426816']} // Gradient for button
               style={styles.loginButtonGradient}

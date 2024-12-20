@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';  // For the "+" icon
 import { launchImageLibrary } from 'react-native-image-picker';  // Image picker library
+import AsyncStorage from '@react-native-async-storage/async-storage';  // For storing and retrieving user data
 
 const EditProfileScreen = () => {
   const [username, setUsername] = useState('JohnDoe');
@@ -17,6 +18,19 @@ const EditProfileScreen = () => {
   const [phoneNumber, setPhoneNumber] = useState('123-456-7890');
   const [password, setPassword] = useState('********');
   const [profileImage, setProfileImage] = useState(require('./assets/user1.png'));  // Default profile picture
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    // Retrieve userId from AsyncStorage (or other storage method)
+    const fetchUserId = async () => {
+      const storedUserId = await AsyncStorage.getItem('userId');
+      if (storedUserId) {
+        setUserId(storedUserId);
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   // Function to handle image picking
   const handleImagePick = () => {
@@ -36,6 +50,46 @@ const EditProfileScreen = () => {
         }
       }
     );
+  };
+
+  // Function to handle profile update
+  const handleProfileUpdate = async () => {
+    if (!userId) {
+      alert('User ID is missing');
+      return;
+    }
+
+    try {
+      const formData = new FormData();
+      formData.append('profileImage', {
+        uri: profileImage.uri,
+        type: 'image/jpeg',  // Adjust the type based on the selected image
+        name: 'profile-image.jpg',
+      });
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('phoneNumber', phoneNumber);
+      formData.append('password', password);
+      formData.append('userId', userId);  // Include userId in the form data
+
+      const response = await fetch('http:///localhost:8080/updateProfile', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+        body: formData,
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        alert('Profile updated successfully!');
+      } else {
+        alert('Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      alert('Error updating profile');
+    }
   };
 
   return (
@@ -94,7 +148,7 @@ const EditProfileScreen = () => {
       </View>
 
       {/* Update Button */}
-      <TouchableOpacity style={styles.updateButton}>
+      <TouchableOpacity style={styles.updateButton} onPress={handleProfileUpdate}>
         <Text style={styles.updateButtonText}>Update</Text>
       </TouchableOpacity>
     </View>

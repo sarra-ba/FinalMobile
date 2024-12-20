@@ -10,29 +10,37 @@ import {
 import Icon from 'react-native-vector-icons/dist/FontAwesome';
 import LottieView from 'lottie-react-native';
 import { useNavigation, useRoute } from '@react-navigation/native'; // Import useRoute for receiving params
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const Cart = () => {
-  const [cartItems, setCartItems] = useState([
-    { id: 1, name: 'Organic Fertilizer', price: '$25', image: require('./assets/fertilizer.png') },
-    { id: 2, name: 'Nitrogen Boost', price: '$30', image: require('./assets/fertilizer.png') },
-    { id: 3, name: 'Fertilizer1', price: '$25', image: require('./assets/fertilizer.png') },
-    { id: 4, name: 'Fertilizer2', price: '$30', image: require('./assets/fertilizer.png') },
-  ]);
-
+  const [cartItems, setCartItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null); // State to store userId
   const navigation = useNavigation(); // Initialize navigation
   const route = useRoute(); // Use route to get parameters passed from the Marketplace screen
 
-  // Handle adding a product to the cart
-  const handleAddToCart = (product) => {
-    setCartItems((prevItems) => [...prevItems, product]); // Add the new product to the cart
-  };
-
-  // If the route has a product (when navigating from the Marketplace), add it to the cart
+  // Fetch userId from AsyncStorage and orders from backend
   useEffect(() => {
-    if (route.params?.product) {
-      handleAddToCart(route.params.product);
-    }
-  }, [route.params?.product]);
+    const fetchUserIdAndOrders = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId'); // Retrieve userId from AsyncStorage
+        if (storedUserId) {
+          setUserId(storedUserId); // Set userId to state
+          const response = await fetch(`http:///localhost:8080/api/orders/user/${storedUserId}`);
+          const data = await response.json();
+          setCartItems(data); // Set the fetched orders to the cartItems state
+        } else {
+          console.log('User ID not found in local storage');
+        }
+      } catch (error) {
+        console.error('Error fetching userId or orders:', error);
+      } finally {
+        setLoading(false); // Set loading to false once the request is complete
+      }
+    };
+
+    fetchUserIdAndOrders();
+  }, []); // Only run this effect once when the component mounts
 
   const handleRemoveItem = (id) => {
     setCartItems(cartItems.filter(item => item.id !== id));
@@ -45,6 +53,10 @@ const Cart = () => {
   const handleGoToMarketPlace = () => {
     navigation.navigate('Marketplace'); // Navigate to MarketPlace screen
   };
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Show a loading indicator while fetching orders
+  }
 
   return (
     <View style={styles.container}>
@@ -64,7 +76,7 @@ const Cart = () => {
               <Image source={item.image} style={styles.productImage} />
               <View style={styles.itemDetails}>
                 <Text style={styles.productName}>{item.name}</Text>
-                <Text style={styles.productPrice}>{item.price}</Text>
+                <Text style={styles.productPrice}>${item.price}</Text>
               </View>
               <TouchableOpacity
                 style={styles.removeButton}

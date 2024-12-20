@@ -8,26 +8,26 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  Linking,
 } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
 import BouncyCheckbox from 'react-native-bouncy-checkbox';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const SignupScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [isFarmer, setIsFarmer] = useState(false); // State for 'Farmer' checkbox
-  const [isRestaurant, setIsRestaurant] = useState(false); // State for 'Restaurant/Hotel' checkbox
+  const [isFarmer, setIsFarmer] = useState(false);
+  const [isRestaurant, setIsRestaurant] = useState(false);
   const navigation = useNavigation();
 
-  // Function to dismiss the keyboard when tapping outside input fields
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  // Function to validate inputs and proceed with signup
   const validateAndSignup = () => {
     if (!name) {
       Alert.alert('Validation Error', 'Name is required.');
@@ -52,27 +52,79 @@ const SignupScreen = () => {
       );
       return;
     }
-    // Navigate to Login after successful validation
-    navigation.navigate('Login');
+
+    // Prepare data for backend
+    const data = {
+      username: name,
+      email: email,
+      password: password,
+      userType: isFarmer ? 'Farmer' : 'Restaurant/Hotel',
+    };
+
+    fetch('http://localhost:8080/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success) {
+          Alert.alert('Success', 'Account created successfully!');
+          navigation.navigate('Login');
+        } else {
+          Alert.alert('Error', 'Signup failed. Please try again.');
+        }
+      })
+      .catch((error) => {
+        Alert.alert('Error', 'An error occurred during signup.');
+      });
+  };
+
+  const handleThirdPartyLogin = async (platform) => {
+    let url = '';
+    switch (platform) {
+      case 'Google':
+        url = 'https://accounts.google.com/';
+        break;
+      case 'Facebook':
+        url = 'https://www.facebook.com/';
+        break;
+      case 'Twitter':
+        url = 'https://www.twitter.com/';
+        break;
+      default:
+        Alert.alert('Error', 'Unknown platform');
+        return;
+    }
+
+    try {
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', `Unable to open URL: ${url}`);
+      }
+    } catch (error) {
+      Alert.alert('Error', 'An error occurred while trying to open the URL.');
+    }
   };
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
-        {/* Animated Icon */}
         <View style={styles.animationContainer}>
           <LottieView
-            source={require('./assets/wel.json')} // Animated asset for visual appeal
+            source={require('./assets/wel.json')}
             autoPlay
             loop
             style={styles.animatedIcon}
           />
         </View>
 
-        {/* Page Title */}
         <Text style={styles.title}>Create an Account</Text>
 
-        {/* Form Inputs */}
         <View style={styles.formContainer}>
           <Text style={styles.label}>Name</Text>
           <TextInput
@@ -104,7 +156,6 @@ const SignupScreen = () => {
             secureTextEntry
           />
 
-          {/* Farmer / Restaurant / Hotel Selection */}
           <View style={styles.checkboxRow}>
             <BouncyCheckbox
               size={22}
@@ -115,7 +166,7 @@ const SignupScreen = () => {
               iconStyle={{ borderColor: '#72C21B' }}
               onPress={(isChecked) => {
                 setIsFarmer(isChecked);
-                if (isChecked) setIsRestaurant(false); // Unselect other option
+                if (isChecked) setIsRestaurant(false);
               }}
               isChecked={isFarmer}
             />
@@ -129,13 +180,12 @@ const SignupScreen = () => {
               iconStyle={{ borderColor: '#72C21B' }}
               onPress={(isChecked) => {
                 setIsRestaurant(isChecked);
-                if (isChecked) setIsFarmer(false); // Unselect other option
+                if (isChecked) setIsFarmer(false);
               }}
               isChecked={isRestaurant}
             />
           </View>
 
-          {/* Sign Up Button */}
           <TouchableOpacity style={styles.signupButton} onPress={validateAndSignup}>
             <LinearGradient
               colors={['#72C21B', '#81CE2C', '#426816']}
@@ -145,9 +195,32 @@ const SignupScreen = () => {
             </LinearGradient>
           </TouchableOpacity>
 
-          {/* Already have an account link */}
           <TouchableOpacity onPress={() => navigation.navigate('Login')}>
             <Text style={styles.link}>Already have an account? Log In</Text>
+          </TouchableOpacity>
+        </View>
+
+        <Text style={styles.orText}>Or sign up with</Text>
+        <View style={styles.socialButtonsContainer}>
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={() => handleThirdPartyLogin('Google')}
+          >
+            <Icon name="google" size={24} color="#DB4437" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={() => handleThirdPartyLogin('Facebook')}
+          >
+            <Icon name="facebook" size={24} color="#3b5998" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.socialButton}
+            onPress={() => handleThirdPartyLogin('Twitter')}
+          >
+            <Icon name="twitter" size={24} color="#1DA1F2" />
           </TouchableOpacity>
         </View>
       </View>
@@ -203,29 +276,44 @@ const styles = StyleSheet.create({
   },
   signupButtonGradient: {
     paddingVertical: 15,
-    alignItems: 'center',
+    paddingHorizontal: 50,
     borderRadius: 10,
   },
   signupButtonText: {
+    fontSize: 18,
     color: 'white',
-    fontSize: 16,
     fontWeight: 'bold',
-  },
-  link: {
-    marginTop: 15,
-    fontSize: 14,
-    color: '#426816',
-    textDecorationLine: 'underline',
     textAlign: 'center',
   },
-  checkboxRow: {
+  link: {
+    textAlign: 'center',
+    color: '#426816',
     marginTop: 10,
-    marginBottom: 30,
+  },
+  orText: {
+    fontSize: 16,
+    color: '#aaa',
+    marginVertical: 20,
+  },
+  socialButtonsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  socialButton: {
+    marginHorizontal: 10,
+    padding: 10,
+    borderRadius: 50,
+    backgroundColor: '#F5F5F5',
+  },
+  checkboxRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   checkboxText: {
-    textDecorationLine: 'none',
+    fontSize: 14,
     color: '#426816',
-    fontSize: 16,
   },
 });
 

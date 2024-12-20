@@ -1,13 +1,37 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Modal } from 'react-native';
 import LottieView from 'lottie-react-native';  // Import LottieView component
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 const LogoutConfirmation = ({ navigation }) => {
   const [visible, setVisible] = useState(true);
 
-  const handleLogout = () => {
-    // Handle logout logic here (e.g., clearing tokens, redirecting to login screen)
-    navigation.navigate('Login'); // Navigate to the Login screen after logout
+  const handleLogout = async () => {
+    try {
+      // Make an API call to the backend to log the user out
+      const response = await fetch('http://localhost:8080/api/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies or session data are included in the request
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Clear user-related data from AsyncStorage
+        await AsyncStorage.removeItem('userId');  // Remove userId if stored
+
+        // Navigate to the login screen
+        navigation.navigate('Login');
+      } else {
+        alert('Logout failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error logging out:', error);
+      alert('An error occurred while logging out.');
+    }
   };
 
   const handleCancel = () => {
