@@ -60,7 +60,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable()) // Disable CSRF for API use
             .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Use the CORS configuration bean
             .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/register", "/api/login","api/updateProfile","api/logout","api/products").permitAll() // Public URLs
+                .requestMatchers("/api/register", "/api/login","api/updateProfile","api/logout","api/products","/api/foodwaste/add","/api/foodwaste/delete/{id}","/api/foodwaste/update/{id}").permitAll() // Public URLs
                 .anyRequest().authenticated() // Any other request requires authentication
             )
             .formLogin(form -> form.disable()) // Disable form login
